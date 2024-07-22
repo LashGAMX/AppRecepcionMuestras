@@ -11,6 +11,8 @@ String? horaEntrada;
 String? fechaMuestreo;
 String? fechaConformacion;
 String? procedencia;
+String? parametrosGenerados;
+bool? folioEncontrado;
 
 class AguaPage extends StatefulWidget{
   const AguaPage({super.key});
@@ -38,6 +40,8 @@ class _AguaPageState extends State<AguaPage>{
     fechaMuestreo = null;
     fechaConformacion = null;
     procedencia = null;
+    parametrosGenerados = null;
+    folioEncontrado = false;
     super.initState();
   }
 
@@ -52,6 +56,7 @@ class _AguaPageState extends State<AguaPage>{
           empresa = value.empresa;
           horaRecepcion = value.horaRecepcion;
           horaEntrada = value.horaEntrada;
+          folioEncontrado = true;
         });
       }
       else{
@@ -264,47 +269,131 @@ class _AguaPageState extends State<AguaPage>{
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text('Hora recepción', style: TextStyle(fontWeight: FontWeight.w500),),
-                                  Text((horaRecepcion != null)? '$horaRecepcion' : 'N/A', style: TextStyle(color: Colors.grey.shade500),),
-                                  Text((horaEntrada != null)? '$horaEntrada' : 'N/A', style: TextStyle(color: Colors.grey.shade500),),
+                                  Row(
+                                    children: [
+                                      // Text((horaRecepcion != null)? '$horaRecepcion' : 'N/A', style: TextStyle(color: Colors.grey.shade500),),
+                                      Expanded(
+                                        flex: 9,
+                                        child: Text((horaRecepcion != null)? '$horaRecepcion' : 'N/A', style: TextStyle(color: Colors.grey.shade500),),
+                                      ),
+                                      Expanded(
+                                        child: GestureDetector(
+                                          onTap: (folioEncontrado != false)? (){
+                                            showDatePicker(
+                                              context: context,
+                                              initialDate: DateTime.parse('$horaRecepcion'),
+                                              firstDate: DateTime.now().subtract(const Duration(days: 365 * 100)),
+                                              lastDate: DateTime.now(),
+                                            ).then((diaSeleccionado) {
+                                              if(diaSeleccionado != null){
+                                                showTimePicker(
+                                                  context: context,
+                                                  initialTime: TimeOfDay.fromDateTime(DateTime.parse('$horaRecepcion')),
+                                                ).then((horaSeleccionada) {
+                                                  if(horaSeleccionada != null) {
+                                                    DateTime fechaSeleccionada = DateTime(
+                                                      diaSeleccionado.year,
+                                                      diaSeleccionado.month,
+                                                      diaSeleccionado.day,
+                                                      horaSeleccionada.hour,
+                                                      horaSeleccionada.minute,
+                                                    );
+                                                    String fechaConvertida = '${fechaSeleccionada.year.toString()}-${fechaSeleccionada.month.toString().padLeft(2,'0')}-${fechaSeleccionada.day.toString().padLeft(2,'0')} ${fechaSeleccionada.hour.toString().padLeft(2,'0')}:${fechaSeleccionada.minute.toString().padLeft(2,'0')}:00';
+                                                    setState(() {
+                                                      horaRecepcion = fechaConvertida;
+                                                    });
+                                                  }
+                                                });
+                                              }
+                                            });
+                                          } : null,
+                                          child: Icon(Icons.edit, color: (folioEncontrado != false)? Theme.of(context).colorScheme.primary : Colors.grey, size: 20,),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      // Text((horaEntrada != null)? '$horaEntrada' : 'N/A', style: TextStyle(color: Colors.grey.shade500),),
+                                      Expanded(
+                                        flex: 9,
+                                        child: Text((horaRecepcion != null)? '$horaEntrada' : 'N/A', style: TextStyle(color: Colors.grey.shade500),),
+                                      ),
+                                      Expanded(
+                                        child: GestureDetector(
+                                          onTap: (folioEncontrado != false)? (){
+                                            showDatePicker(
+                                              context: context,
+                                              initialDate: DateTime.parse('$horaEntrada'),
+                                              firstDate: DateTime.now().subtract(const Duration(days: 365 * 100)),
+                                              lastDate: DateTime.now(),
+                                            ).then((diaSeleccionado){
+                                              if(diaSeleccionado != null){
+                                                showTimePicker(
+                                                  context: context,
+                                                  initialTime: TimeOfDay.fromDateTime(DateTime.parse('$horaEntrada')),
+                                                ).then((horaSeleccionada) {
+                                                  if(horaSeleccionada != null) {
+                                                    DateTime fechaSeleccionada = DateTime(
+                                                      diaSeleccionado.year,
+                                                      diaSeleccionado.month,
+                                                      diaSeleccionado.day,
+                                                      horaSeleccionada.hour,
+                                                      horaSeleccionada.minute,
+                                                    );
+                                                    String fechaConvertida = '${fechaSeleccionada.year.toString()}-${fechaSeleccionada.month.toString().padLeft(2,'0')}-${fechaSeleccionada.day.toString().padLeft(2,'0')} ${fechaSeleccionada.hour.toString().padLeft(2,'0')}:${fechaSeleccionada.minute.toString().padLeft(2,'0')}:00';
+                                                    setState(() {
+                                                      horaEntrada = fechaConvertida;
+                                                    });
+                                                  }
+                                                });
+                                              }
+                                            });
+                                          } : null,
+                                          child: Icon(Icons.edit, color: (folioEncontrado != false)? Theme.of(context).colorScheme.primary : Colors.grey, size: 20,),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10,),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('Fecha fin muestreo', style: TextStyle(fontWeight: FontWeight.w500),),
-                                  Text('dd/mm/aaaa --:-- ----', style: TextStyle(color: Colors.grey.shade500),),
-                                ],
-                              ),
-                            ),
-                            const Padding(padding: EdgeInsets.only(left: 8),),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('Fecha conformación', style: TextStyle(fontWeight: FontWeight.w500),),
-                                  Text('dd/mm/aaaa --:-- ----', style: TextStyle(color: Colors.grey.shade500),),
-                                ],
-                              ),
-                            ),
-                            const Padding(padding: EdgeInsets.only(left: 8),),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('Procedencia', style: TextStyle(fontWeight: FontWeight.w500),),
-                                  Text('N/A', style: TextStyle(color: Colors.grey.shade500),),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                        // const SizedBox(height: 10,),
+                        // Row(
+                        //   children: [
+                        //     Expanded(
+                        //       child: Column(
+                        //         crossAxisAlignment: CrossAxisAlignment.start,
+                        //         children: [
+                        //           const Text('Fecha fin muestreo', style: TextStyle(fontWeight: FontWeight.w500),),
+                        //           Text('dd/mm/aaaa --:-- ----', style: TextStyle(color: Colors.grey.shade500),),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //     const Padding(padding: EdgeInsets.only(left: 8),),
+                        //     Expanded(
+                        //       child: Column(
+                        //         crossAxisAlignment: CrossAxisAlignment.start,
+                        //         children: [
+                        //           const Text('Fecha conformación', style: TextStyle(fontWeight: FontWeight.w500),),
+                        //           Text('dd/mm/aaaa --:-- ----', style: TextStyle(color: Colors.grey.shade500),),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //     const Padding(padding: EdgeInsets.only(left: 8),),
+                        //     Expanded(
+                        //       child: Column(
+                        //         crossAxisAlignment: CrossAxisAlignment.start,
+                        //         children: [
+                        //           const Text('Procedencia', style: TextStyle(fontWeight: FontWeight.w500),),
+                        //           Text('N/A', style: TextStyle(color: Colors.grey.shade500),),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
                       ],
                     ),
                   ),
@@ -338,7 +427,42 @@ class _AguaPageState extends State<AguaPage>{
                     width: MediaQuery.of(context).size.width - 30,
                     child: Column(
                       children: [
-                        Row()
+                        Row(
+                          children: [
+                            Flexible(
+                              fit: FlexFit.tight,
+                              child: SizedBox(
+                                height: 50,
+                                child: ElevatedButton(
+                                  onPressed: (parametrosGenerados == null)? null : (){},
+                                  style: ButtonStyle(
+                                    backgroundColor: WidgetStateProperty.resolveWith((states){
+                                      if(states.contains(WidgetState.pressed)){
+                                        return const Color.fromRGBO(0, 168, 23, 1);
+                                      }
+                                      if(states.contains(WidgetState.disabled)){
+                                        return const Color.fromRGBO(0, 168, 89, 0.4);
+                                      }
+                                      return const Color.fromRGBO(0, 168, 80, 1);
+                                    }),
+                                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                      const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                                      ),
+                                    ),
+                                    elevation: WidgetStateProperty.resolveWith((states){
+                                      if(states.contains(WidgetState.disabled)){
+                                        return 0;
+                                      }
+                                      return 8;
+                                    }),
+                                  ),
+                                  child: const Text('Generar Codigos', style: TextStyle(color: Colors.white),),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
