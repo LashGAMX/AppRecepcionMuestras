@@ -66,4 +66,26 @@ class ServicioAPI {
       throw Exception('Error al regresar información del folio');
     }
   }
+
+  Future<bool> upHoraRecepcion(String folio, int tipoHora, String hora) async {
+    final response = await http.post(
+      Uri.parse('${urlBase}upHoraRecepcion'),
+      headers: <String, String>{
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'folio': folio,
+        'tipoHora': tipoHora,
+        'hora': hora,
+      }),
+    );
+
+    print(response.statusCode);
+    if(response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500){
+      return true;
+    }
+    else{
+      throw Exception('Error al cambiar la hora');
+    }
+  }
 }

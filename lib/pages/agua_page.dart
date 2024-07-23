@@ -76,6 +76,10 @@ class _AguaPageState extends State<AguaPage>{
     });
   }
 
+  upHoraRecepcion(String folio, int tipoHora, String hora) async {
+    servicioAPI.upHoraRecepcion(folio, tipoHora, hora);
+  }
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -301,6 +305,7 @@ class _AguaPageState extends State<AguaPage>{
                                                     String fechaConvertida = '${fechaSeleccionada.year.toString()}-${fechaSeleccionada.month.toString().padLeft(2,'0')}-${fechaSeleccionada.day.toString().padLeft(2,'0')} ${fechaSeleccionada.hour.toString().padLeft(2,'0')}:${fechaSeleccionada.minute.toString().padLeft(2,'0')}:00';
                                                     setState(() {
                                                       horaRecepcion = fechaConvertida;
+                                                      servicioAPI.upHoraRecepcion(folio!, 1, horaRecepcion!);
                                                     });
                                                   }
                                                 });
@@ -344,6 +349,7 @@ class _AguaPageState extends State<AguaPage>{
                                                     String fechaConvertida = '${fechaSeleccionada.year.toString()}-${fechaSeleccionada.month.toString().padLeft(2,'0')}-${fechaSeleccionada.day.toString().padLeft(2,'0')} ${fechaSeleccionada.hour.toString().padLeft(2,'0')}:${fechaSeleccionada.minute.toString().padLeft(2,'0')}:00';
                                                     setState(() {
                                                       horaEntrada = fechaConvertida;
+                                                      servicioAPI.upHoraRecepcion(folio!, 2, horaEntrada!);
                                                     });
                                                   }
                                                 });
