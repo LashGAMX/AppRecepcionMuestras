@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recepcion_app/api/servicio_api.dart';
+import 'package:recepcion_app/models/informacion_agua_model.dart';
 
 bool errorEncontrar = false;
 String? folio;
@@ -12,6 +13,7 @@ String? fechaMuestreo;
 String? fechaConformacion;
 String? procedencia;
 String? parametrosGenerados;
+List<FoliosHijosModel>? foliosHijos;
 bool? folioEncontrado;
 
 class AguaPage extends StatefulWidget{
@@ -56,6 +58,7 @@ class _AguaPageState extends State<AguaPage>{
           empresa = value.empresa;
           horaRecepcion = value.horaRecepcion;
           horaEntrada = value.horaEntrada;
+          foliosHijos = value.puntosMuestreo;
           folioEncontrado = true;
         });
       }
@@ -71,6 +74,7 @@ class _AguaPageState extends State<AguaPage>{
           fechaMuestreo = null;
           fechaConformacion = null;
           procedencia = null;
+          foliosHijos = null;
         });
       }
     });
@@ -400,6 +404,45 @@ class _AguaPageState extends State<AguaPage>{
                         //     ),
                         //   ],
                         // ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 15,),
+              const Row(
+                children: [
+                  Padding(padding: EdgeInsets.only(left: 15),),
+                  Text('Puntos de muestreo', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                ],
+              ),
+              const SizedBox(height: 10,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(15),),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    width: MediaQuery.of(context).size.width - 30,
+                    child: const Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('No hay puntos de muestreo que mostrar', style: TextStyle(fontSize: 15, ),),
+                          ],
+                        ),
                       ],
                     ),
                   ),
