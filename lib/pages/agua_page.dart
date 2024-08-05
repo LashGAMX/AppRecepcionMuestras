@@ -43,6 +43,7 @@ class _AguaPageState extends State<AguaPage>{
     fechaConformacion = null;
     procedencia = null;
     parametrosGenerados = null;
+    foliosHijos = null;
     folioEncontrado = false;
     super.initState();
   }
@@ -421,7 +422,7 @@ class _AguaPageState extends State<AguaPage>{
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 5),
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(15),),
                       color: Colors.white,
@@ -435,14 +436,56 @@ class _AguaPageState extends State<AguaPage>{
                       ],
                     ),
                     width: MediaQuery.of(context).size.width - 30,
-                    child: const Column(
+                    child: Column(
                       children: [
-                        Row(
+                        (foliosHijos != null) ?
+                        ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemCount: foliosHijos?.length ?? 0,
+                          itemBuilder: (context, index) {
+                            final punto = foliosHijos![index];
+                            return Container(
+                              decoration: BoxDecoration(
+                                border: (index == foliosHijos!.length - 1)? null : const Border(bottom: BorderSide(width: 0.1),),
+                              ),
+                              child: ListTile(
+                                leading: Icon(Icons.do_not_disturb_on_total_silence_rounded, color: Theme.of(context).colorScheme.primary,),
+                                // leading: Text('${punto.idFolio}', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 14),),
+                                title: Row(
+                                  children: [
+                                    Text('${punto.idFolio} ', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold), softWrap: true,),
+                                    Text('${punto.punto}', style: const TextStyle(fontWeight: FontWeight.bold), softWrap: true,),
+                                  ],
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Conductividad: ${punto.conductividad ?? 'Sin conductividad'}', softWrap: true,),
+                                    Text('Cloruros: ${punto.cloruros ?? 'Sin cloruros'}', softWrap: true,),
+                                  ],
+                                ),
+                                trailing: IconButton(
+                                  icon: Icon(Icons.arrow_forward_ios, color: Theme.of(context).colorScheme.primary,),
+                                  onPressed: (){},
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                            :
+                        const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text('No hay puntos de muestreo que mostrar', style: TextStyle(fontSize: 15, ),),
                           ],
                         ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.center,
+                        //   children: [
+                        //     Text('No hay puntos de muestreo que mostrar', style: TextStyle(fontSize: 15, ),),
+                        //   ],
+                        // ),
                       ],
                     ),
                   ),

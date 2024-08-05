@@ -11,8 +11,8 @@ class FoliosHijosModel{
       {
         'idFolio': int idFolio,
         'punto': String punto,
-        'conductividad': int conductividad,
-        'cloruros': int cloruros,
+        'conductividad': int? conductividad,
+        'cloruros': int? cloruros,
       } =>
         FoliosHijosModel(
           idFolio: idFolio,
