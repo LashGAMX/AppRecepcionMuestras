@@ -1,18 +1,18 @@
 class FoliosHijosModel{
-  String? idFolio;
+  int? idFolio;
   String? punto;
-  String? conductividad;
-  String? cloruros;
+  int? conductividad;
+  int? cloruros;
 
   FoliosHijosModel({this.idFolio, this.punto, this.conductividad, this.cloruros});
 
   factory FoliosHijosModel.fromJson(Map<String, dynamic> json){
     return switch(json){
       {
-        'idFolio': String idFolio,
+        'idFolio': int idFolio,
         'punto': String punto,
-        'conductividad': String conductividad,
-        'cloruros': String cloruros,
+        'conductividad': int conductividad,
+        'cloruros': int cloruros,
       } =>
         FoliosHijosModel(
           idFolio: idFolio,
@@ -38,6 +38,8 @@ class InformacionAguaModel {
   InformacionAguaModel({required this.mensaje, this.folio, this.descarga, this.cliente, this.empresa, this.horaRecepcion, this.horaEntrada, this.puntosMuestreo});
 
   factory InformacionAguaModel.fromJson(Map<String, dynamic> json){
+    var lista = json['puntosMuestreo'] as List?;
+    List<FoliosHijosModel>? puntosRespuesta = lista?.map((i) => FoliosHijosModel.fromJson(i)).toList();
     return switch(json) {
       {
         'mensaje': String mensaje,
@@ -47,7 +49,6 @@ class InformacionAguaModel {
         'empresa': String? empresa,
         'horaRecepcion': String? horaRecepcion,
         'horaEntrada': String? horaEntrada,
-        'puntosMuestreo': List<FoliosHijosModel>? puntosMuestreo,
       } =>
         InformacionAguaModel(
           mensaje: mensaje,
@@ -57,7 +58,7 @@ class InformacionAguaModel {
           empresa: empresa,
           horaRecepcion: horaRecepcion,
           horaEntrada: horaEntrada,
-          puntosMuestreo: puntosMuestreo,
+          puntosMuestreo: puntosRespuesta,
         ),
       _ => throw const FormatException('Error al cargar informacion'),
     };
