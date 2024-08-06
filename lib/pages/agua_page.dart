@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:recepcion_app/api/servicio_api.dart';
 import 'package:recepcion_app/models/informacion_agua_model.dart';
+import 'package:recepcion_app/pages/punto_muestreo_page.dart';
 
 bool errorEncontrar = false;
 String? folio;
@@ -462,12 +463,18 @@ class _AguaPageState extends State<AguaPage>{
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text('Conductividad: ${punto.conductividad ?? 'Sin conductividad'}', softWrap: true,),
-                                    Text('Cloruros: ${punto.cloruros ?? 'Sin cloruros'}', softWrap: true,),
+                                    // Text('Cloruros: ${punto.cloruros ?? 'Sin cloruros'}', softWrap: true,),
+                                    obtenerCloruros(punto.cloruros),
                                   ],
                                 ),
                                 trailing: IconButton(
                                   icon: Icon(Icons.arrow_forward_ios, color: Theme.of(context).colorScheme.primary,),
-                                  onPressed: (){},
+                                  onPressed: (){
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => PuntoMuestreoPage(puntoMuestreo: punto)),
+                                    );
+                                  },
                                 ),
                               ),
                             );
@@ -565,5 +572,20 @@ class _AguaPageState extends State<AguaPage>{
         ),
       ),
     );
+  }
+
+  Widget obtenerCloruros(int? cloruros){
+    switch(cloruros){
+      case 499:
+        return const Text('Cloruros: < 500', softWrap: true,);
+      case 500:
+        return const Text('Cloruros: 500', softWrap: true,);
+      case 1000:
+        return const Text('Cloruros: 1000', softWrap: true,);
+      case 1500:
+        return const Text('Cloruros: > 1000', softWrap: true,);
+      default:
+        return const Text('Cloruros: Sin cloruros');
+    }
   }
 }
