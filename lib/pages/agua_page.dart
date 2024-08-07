@@ -5,12 +5,14 @@ import 'package:recepcion_app/pages/punto_muestreo_page.dart';
 
 bool errorEncontrar = false;
 String? folio;
+bool? muestraIngresada;
 String? descarga;
 String? cliente;
 String? empresa;
+String? fechaMuestreo;
 String? horaRecepcion;
 String? horaEntrada;
-String? fechaMuestreo;
+String? fechaFinMuestreo;
 String? fechaConformacion;
 String? procedencia;
 String? parametrosGenerados;
@@ -35,12 +37,14 @@ class _AguaPageState extends State<AguaPage>{
     // TODO: implement initState
     errorEncontrar = false;
     folio = null;
+    muestraIngresada = null;
     descarga = null;
     cliente = null;
     empresa = null;
+    fechaMuestreo = null;
     horaRecepcion = null;
     horaEntrada = null;
-    fechaMuestreo = null;
+    fechaFinMuestreo = null;
     fechaConformacion = null;
     procedencia = null;
     parametrosGenerados = null;
@@ -55,9 +59,11 @@ class _AguaPageState extends State<AguaPage>{
         setState(() {
           errorEncontrar = false;
           folio = value.folio;
+          muestraIngresada = value.muestraIngresada;
           descarga = value.descarga;
           cliente = value.cliente;
           empresa = value.empresa;
+          fechaMuestreo = value.fechaMuestreo;
           horaRecepcion = value.horaRecepcion;
           horaEntrada = value.horaEntrada;
           foliosHijos = value.puntosMuestreo;
@@ -68,12 +74,14 @@ class _AguaPageState extends State<AguaPage>{
         setState(() {
           errorEncontrar = true;
           folio = null;
+          muestraIngresada = null;
           descarga = null;
           cliente = null;
           empresa = null;
+          fechaMuestreo = null;
           horaRecepcion = null;
           horaEntrada = null;
-          fechaMuestreo = null;
+          fechaFinMuestreo = null;
           fechaConformacion = null;
           procedencia = null;
           foliosHijos = null;
@@ -288,17 +296,19 @@ class _AguaPageState extends State<AguaPage>{
                                       ),
                                       Expanded(
                                         child: GestureDetector(
-                                          onTap: (folioEncontrado != false)? (){
+                                          onTap: (folioEncontrado != false && muestraIngresada == false)? (){
                                             showDatePicker(
                                               context: context,
-                                              initialDate: DateTime.parse('$horaRecepcion'),
-                                              firstDate: DateTime.now().subtract(const Duration(days: 365 * 100)),
+                                              initialDate: DateTime.parse('$fechaMuestreo'),
+                                              firstDate: DateTime.parse('$fechaMuestreo'),
+                                              // firstDate: DateTime.now().subtract(const Duration(days: 365 * 100)),
                                               lastDate: DateTime.now(),
                                             ).then((diaSeleccionado) {
                                               if(diaSeleccionado != null){
                                                 showTimePicker(
                                                   context: context,
-                                                  initialTime: TimeOfDay.fromDateTime(DateTime.parse('$horaRecepcion')),
+                                                  initialTime: TimeOfDay.now(),
+                                                  // initialTime: TimeOfDay.fromDateTime(DateTime.parse('$horaRecepcion')),
                                                 ).then((horaSeleccionada) {
                                                   if(horaSeleccionada != null) {
                                                     DateTime fechaSeleccionada = DateTime(
@@ -311,14 +321,14 @@ class _AguaPageState extends State<AguaPage>{
                                                     String fechaConvertida = '${fechaSeleccionada.year.toString()}-${fechaSeleccionada.month.toString().padLeft(2,'0')}-${fechaSeleccionada.day.toString().padLeft(2,'0')} ${fechaSeleccionada.hour.toString().padLeft(2,'0')}:${fechaSeleccionada.minute.toString().padLeft(2,'0')}:00';
                                                     setState(() {
                                                       horaRecepcion = fechaConvertida;
-                                                      servicioAPI.upHoraRecepcion(folio!, 1, horaRecepcion!);
+                                                      // servicioAPI.upHoraRecepcion(folio!, 1, horaRecepcion!);
                                                     });
                                                   }
                                                 });
                                               }
                                             });
                                           } : null,
-                                          child: Icon(Icons.edit, color: (folioEncontrado != false)? Theme.of(context).colorScheme.primary : Colors.grey, size: 20,),
+                                          child: Icon(Icons.edit, color: (folioEncontrado != false && muestraIngresada == false)? Theme.of(context).colorScheme.primary : Colors.grey, size: 20,),
                                         ),
                                       ),
                                     ],
@@ -332,17 +342,19 @@ class _AguaPageState extends State<AguaPage>{
                                       ),
                                       Expanded(
                                         child: GestureDetector(
-                                          onTap: (folioEncontrado != false)? (){
+                                          onTap: (folioEncontrado != false && muestraIngresada == false)? (){
                                             showDatePicker(
                                               context: context,
-                                              initialDate: DateTime.parse('$horaEntrada'),
-                                              firstDate: DateTime.now().subtract(const Duration(days: 365 * 100)),
+                                              initialDate: DateTime.parse('$fechaMuestreo'),
+                                              firstDate: DateTime.parse('$fechaMuestreo'),
+                                              // firstDate: DateTime.now().subtract(const Duration(days: 365 * 100)),
                                               lastDate: DateTime.now(),
                                             ).then((diaSeleccionado){
                                               if(diaSeleccionado != null){
                                                 showTimePicker(
                                                   context: context,
-                                                  initialTime: TimeOfDay.fromDateTime(DateTime.parse('$horaEntrada')),
+                                                  initialTime: TimeOfDay.now(),
+                                                  // initialTime: TimeOfDay.fromDateTime(DateTime.parse('$horaEntrada')),
                                                 ).then((horaSeleccionada) {
                                                   if(horaSeleccionada != null) {
                                                     DateTime fechaSeleccionada = DateTime(
@@ -355,14 +367,14 @@ class _AguaPageState extends State<AguaPage>{
                                                     String fechaConvertida = '${fechaSeleccionada.year.toString()}-${fechaSeleccionada.month.toString().padLeft(2,'0')}-${fechaSeleccionada.day.toString().padLeft(2,'0')} ${fechaSeleccionada.hour.toString().padLeft(2,'0')}:${fechaSeleccionada.minute.toString().padLeft(2,'0')}:00';
                                                     setState(() {
                                                       horaEntrada = fechaConvertida;
-                                                      servicioAPI.upHoraRecepcion(folio!, 2, horaEntrada!);
+                                                      // servicioAPI.upHoraRecepcion(folio!, 2, horaEntrada!);
                                                     });
                                                   }
                                                 });
                                               }
                                             });
                                           } : null,
-                                          child: Icon(Icons.edit, color: (folioEncontrado != false)? Theme.of(context).colorScheme.primary : Colors.grey, size: 20,),
+                                          child: Icon(Icons.edit, color: (folioEncontrado != false && muestraIngresada == false)? Theme.of(context).colorScheme.primary : Colors.grey, size: 20,),
                                         ),
                                       ),
                                     ],
@@ -455,8 +467,23 @@ class _AguaPageState extends State<AguaPage>{
                                 // leading: Text('${punto.idFolio}', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 14),),
                                 title: Row(
                                   children: [
-                                    Text('${punto.idFolio} ', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold), softWrap: true,),
-                                    Text('${punto.punto}', style: const TextStyle(fontWeight: FontWeight.bold), softWrap: true,),
+                                    Expanded(
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                              text: '${punto.idFolio} ',
+                                              style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold,),
+                                            ),
+                                            TextSpan(
+                                              text: '${punto.punto}',
+                                              style: const TextStyle(fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                        softWrap: true,
+                                      ),
+                                    ),
                                   ],
                                 ),
                                 subtitle: Column(
