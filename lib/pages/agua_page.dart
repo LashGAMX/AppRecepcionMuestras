@@ -6,6 +6,7 @@ import 'package:recepcion_app/pages/punto_muestreo_page.dart';
 bool errorEncontrar = false;
 String? folio;
 bool? muestraIngresada;
+bool? siralab;
 String? descarga;
 String? cliente;
 String? empresa;
@@ -38,6 +39,7 @@ class _AguaPageState extends State<AguaPage>{
     errorEncontrar = false;
     folio = null;
     muestraIngresada = null;
+    siralab = null;
     descarga = null;
     cliente = null;
     empresa = null;
@@ -60,6 +62,7 @@ class _AguaPageState extends State<AguaPage>{
           errorEncontrar = false;
           folio = value.folio;
           muestraIngresada = value.muestraIngresada;
+          siralab = value.siralab;
           descarga = value.descarga;
           cliente = value.cliente;
           empresa = value.empresa;
@@ -75,6 +78,7 @@ class _AguaPageState extends State<AguaPage>{
           errorEncontrar = true;
           folio = null;
           muestraIngresada = null;
+          siralab = null;
           descarga = null;
           cliente = null;
           empresa = null;
@@ -206,6 +210,21 @@ class _AguaPageState extends State<AguaPage>{
                   ),
                 ],
               ),
+              (folioEncontrado == true)? const SizedBox(height: 15,) : const SizedBox(),
+              (folioEncontrado == true)?
+                Row(
+                  children: [
+                    const Padding(padding: EdgeInsets.only(left: 15),),
+                    Expanded(
+                      child: (muestraIngresada == true)? const Text('Muestra ingresada', style: TextStyle(color: Colors.green), softWrap: true,) : Text('Falta ingresar', style: TextStyle(color: Colors.yellow.shade800), softWrap: true,),
+                    ),
+                    Expanded(
+                      child: (siralab == true)? const Text('Folio Siralab', style: TextStyle(color: Colors.green), softWrap: true,) : Text('Folio no Siralab', style: TextStyle(color: Colors.yellow.shade800), softWrap: true,),
+                    ),
+                  ],
+                )
+                  :
+                const SizedBox(),
               const SizedBox(height: 15,),
               const Row(
                 children: [
@@ -302,7 +321,7 @@ class _AguaPageState extends State<AguaPage>{
                                               initialDate: DateTime.parse('$fechaMuestreo'),
                                               firstDate: DateTime.parse('$fechaMuestreo'),
                                               // firstDate: DateTime.now().subtract(const Duration(days: 365 * 100)),
-                                              lastDate: DateTime.now(),
+                                              lastDate: DateTime.now().add(const Duration()),
                                             ).then((diaSeleccionado) {
                                               if(diaSeleccionado != null){
                                                 showTimePicker(

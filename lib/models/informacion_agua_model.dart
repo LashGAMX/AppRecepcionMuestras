@@ -29,6 +29,7 @@ class InformacionAguaModel {
   String mensaje;
   String? folio;
   bool? muestraIngresada;
+  bool? siralab;
   String? descarga;
   String? cliente;
   String? empresa;
@@ -37,7 +38,7 @@ class InformacionAguaModel {
   String? horaEntrada;
   List<FoliosHijosModel>? puntosMuestreo;
 
-  InformacionAguaModel({required this.mensaje, this.folio, this.muestraIngresada, this.descarga, this.cliente, this.empresa, this.fechaMuestreo, this.horaRecepcion, this.horaEntrada, this.puntosMuestreo});
+  InformacionAguaModel({required this.mensaje, this.folio, this.muestraIngresada, this.siralab, this.descarga, this.cliente, this.empresa, this.fechaMuestreo, this.horaRecepcion, this.horaEntrada, this.puntosMuestreo});
 
   factory InformacionAguaModel.fromJson(Map<String, dynamic> json){
     var lista = json['puntosMuestreo'] as List?;
@@ -47,6 +48,7 @@ class InformacionAguaModel {
         'mensaje': String mensaje,
         'folio': String? folio,
         'muestraIngresada': bool? muestraIngresada,
+        'siralab': bool? siralab,
         'descarga': String? descarga,
         'cliente': String? cliente,
         'empresa': String? empresa,
@@ -58,6 +60,7 @@ class InformacionAguaModel {
           mensaje: mensaje,
           folio: folio,
           muestraIngresada: muestraIngresada,
+          siralab: siralab,
           descarga: descarga,
           cliente: cliente,
           empresa: empresa,
