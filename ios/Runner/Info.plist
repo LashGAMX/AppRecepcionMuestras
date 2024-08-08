@@ -24,6 +24,12 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>La aplicación necesita usar la camara para tomar fotos a las muestras</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>La aplicación necesita el micrófono para la cámara</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>La aplicación necesita acceso a fotos para poder subir fotos guardadas de muestras</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

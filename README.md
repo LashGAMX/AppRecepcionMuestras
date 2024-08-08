@@ -6,7 +6,8 @@ Aplicación móvil desarrollada en Flutter para recepción de muestras
 
 La configuración del proyecto no debería ser muy compleja. Se usaron ciertas librerias
 
-- Shared Preferences: Para manejar variables de sesión
+- Shared_preferences: Para manejar variables de sesión
+- Image_picker: Para tomar fotos y seleccionarlas de galería
 
 ## ESTRUCTURA DEL PROYECTO
 

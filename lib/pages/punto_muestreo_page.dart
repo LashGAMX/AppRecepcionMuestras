@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:recepcion_app/models/informacion_agua_model.dart';
 
 List<String>? listaImagenes;
@@ -14,6 +17,30 @@ class PuntoMuestreoPage extends StatefulWidget{
 
 class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  File? _imagenMostrada;
+
+  Future _tomarFotoDeCamara() async {
+    final imagenTomada = await ImagePicker().pickImage(source: ImageSource.camera);
+
+    if(imagenTomada == null){
+      return;
+    }
+    setState(() {
+      _imagenMostrada = File(imagenTomada.path);
+    });
+  }
+
+  Future _elegirFotoDeBiblioteca() async {
+    final imagenElegida = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if(imagenElegida == null){
+      return;
+    }
+    setState(() {
+      _imagenMostrada = File(imagenElegida.path);
+    });
+  }
 
   @override
   Widget build(BuildContext context){
@@ -103,11 +130,15 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
                 children: [
                   const Padding(padding: EdgeInsets.only(left: 10),),
                   IconButton(
-                    onPressed: (){},
+                    onPressed: (){
+                      _tomarFotoDeCamara();
+                    },
                     icon: Icon(Icons.camera_alt_outlined, color: Theme.of(context).colorScheme.primary,),
                   ),
                   IconButton(
-                    onPressed: (){},
+                    onPressed: (){
+                      _elegirFotoDeBiblioteca();
+                    },
                     icon: Icon(Icons.image_outlined, color: Theme.of(context).colorScheme.primary,),
                   ),
                 ],
@@ -132,8 +163,8 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
                     width: MediaQuery.sizeOf(context).width - 30,
                     child: Column(
                       children: [
-                        (listaImagenes != null) ?
-                        SizedBox()
+                        (_imagenMostrada != null) ?
+                        Image.file(_imagenMostrada!)
                           :
                         const Text('Este punto de muestreo no tiene imágenes', softWrap: true,)
                       ],
