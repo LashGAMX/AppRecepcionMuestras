@@ -1,10 +1,13 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:recepcion_app/api/servicio_api.dart';
 import 'package:recepcion_app/models/informacion_agua_model.dart';
+import 'package:recepcion_app/models/punto_agua_model.dart';
 
-List<String>? listaImagenes;
+List<PuntoAguaModel>? listaImagenes;
 
 class PuntoMuestreoPage extends StatefulWidget{
   final FoliosHijosModel puntoMuestreo;
@@ -17,29 +20,57 @@ class PuntoMuestreoPage extends StatefulWidget{
 
 class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  ServicioAPI servicioAPI = ServicioAPI();
 
-  File? _imagenMostrada;
+  @override
+  void initState() {
+    // TODO: implement initState
+    listaImagenes = null;
+    getFotosPunto(widget.puntoMuestreo.idFolio!);
+    super.initState();
+  }
 
-  Future _tomarFotoDeCamara() async {
-    final imagenTomada = await ImagePicker().pickImage(source: ImageSource.camera);
-
-    if(imagenTomada == null){
-      return;
-    }
-    setState(() {
-      _imagenMostrada = File(imagenTomada.path);
+  getFotosPunto(int idSolicitud) async {
+    servicioAPI.getImagenesPunto(idSolicitud).then((value) {
+      setState(() {
+        listaImagenes = value;
+      });
     });
   }
 
-  Future _elegirFotoDeBiblioteca() async {
-    final imagenElegida = await ImagePicker().pickImage(source: ImageSource.gallery);
+  Future _tomarFotoDeCamara() async {
+    final rutaImagenTomada = await ImagePicker().pickImage(source: ImageSource.camera);
 
-    if(imagenElegida == null){
+    if(rutaImagenTomada == null){
       return;
     }
+    File imagenTomada = File(rutaImagenTomada.path);
+    String imagenBase64 = base64Encode(imagenTomada.readAsBytesSync());
     setState(() {
-      _imagenMostrada = File(imagenElegida.path);
+      listaImagenes ??= [];
+
+      listaImagenes!.add(PuntoAguaModel(foto: imagenBase64));
+      // listaImagenes!.add(File(imagenTomada.path));
     });
+    servicioAPI.setImagenPunto(widget.puntoMuestreo.idFolio!, imagenBase64);
+  }
+
+  Future _elegirFotoDeBiblioteca() async {
+    final rutaImagenElegida = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if(rutaImagenElegida == null){
+      return;
+    }
+    File imagenElegida = File(rutaImagenElegida.path);
+    String imagenBase64 = base64Encode(imagenElegida.readAsBytesSync());
+    setState(() {
+      listaImagenes ??= [];
+
+      listaImagenes!.add(PuntoAguaModel(foto: imagenBase64));
+      // listaImagenes!.add(File(imagenElegida.path));
+      // _imagenMostrada = File(imagenElegida.path);
+    });
+    servicioAPI.setImagenPunto(widget.puntoMuestreo.idFolio!, imagenBase64);
   }
 
   @override
@@ -163,8 +194,31 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
                     width: MediaQuery.sizeOf(context).width - 30,
                     child: Column(
                       children: [
-                        (_imagenMostrada != null) ?
-                        Image.file(_imagenMostrada!)
+                        (listaImagenes != null) ?
+                        GridView.builder(
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 1.0,
+                            mainAxisSpacing: 8.0,
+                          ),
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemCount: listaImagenes!.length,
+                          itemBuilder: (context, index){
+                            // return Expanded(
+                            //   child: Image.file(listaImagenes![index]),
+                            // );
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(0),
+                              ),
+                              child: Center(
+                                child: Image.memory(base64Decode(listaImagenes![index].foto!), fit: BoxFit.fitWidth,),
+                                // child: Image.file(listaImagenes![index], fit: BoxFit.fitWidth,),
+                              ),
+                            );
+                          },
+                        )
                           :
                         const Text('Este punto de muestreo no tiene imágenes', softWrap: true,)
                       ],

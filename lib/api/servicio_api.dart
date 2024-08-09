@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:recepcion_app/models/login_model.dart';
+import 'package:recepcion_app/models/punto_agua_model.dart';
 import 'package:recepcion_app/models/user_model.dart';
 import 'package:recepcion_app/models/informacion_agua_model.dart';
 
@@ -85,6 +86,49 @@ class ServicioAPI {
     }
     else{
       throw Exception('Error al cambiar la hora');
+    }
+  }
+
+  Future<bool> setImagenPunto(int idSolicitud, String foto) async {
+    final response = await http.post(
+      Uri.parse('${urlBase}setImagenPunto'),
+      headers: <String, String>{
+        'Content-type': 'application/json; charset=UTF-8'
+      },
+      body: jsonEncode(<String, dynamic>{
+        'idSolicitud': idSolicitud,
+        'foto': foto,
+      }),
+    );
+
+    if(response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500) {
+      return true;
+    }
+    else{
+      throw Exception('Error al subir la foto');
+    }
+  }
+
+  Future<List<PuntoAguaModel>?> getImagenesPunto(int idSolicitud) async {
+    final response = await http.post(
+      Uri.parse('${urlBase}getImagenesPunto'),
+      headers: <String, String>{
+        'Content-type': 'application/json; charset=UTF-8'
+      },
+      body: jsonEncode(<String, dynamic>{
+        'idSolicitud': idSolicitud,
+      }),
+    );
+
+    if(response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500) {
+      var respuesta = jsonDecode(response.body) as Map<String, dynamic>;
+      var lista = respuesta['model'] as List?;
+      List<PuntoAguaModel>? listaPuntos = lista?.map((i) => PuntoAguaModel.fromJson(i)).toList();
+
+      return listaPuntos;
+    }
+    else{
+      throw Exception('Error al subir la foto');
     }
   }
 }
