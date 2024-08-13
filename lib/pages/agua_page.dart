@@ -19,6 +19,7 @@ String? procedencia;
 String? parametrosGenerados;
 List<FoliosHijosModel>? foliosHijos;
 bool? folioEncontrado;
+int? idNorma;
 
 class AguaPage extends StatefulWidget{
   const AguaPage({super.key});
@@ -51,6 +52,7 @@ class _AguaPageState extends State<AguaPage>{
     procedencia = null;
     parametrosGenerados = null;
     foliosHijos = null;
+    idNorma = null;
     folioEncontrado = false;
     super.initState();
   }
@@ -70,6 +72,7 @@ class _AguaPageState extends State<AguaPage>{
           horaRecepcion = value.horaRecepcion;
           horaEntrada = value.horaEntrada;
           foliosHijos = value.puntosMuestreo;
+          idNorma = value.idNorma;
           folioEncontrado = true;
         });
       }
@@ -89,6 +92,8 @@ class _AguaPageState extends State<AguaPage>{
           fechaConformacion = null;
           procedencia = null;
           foliosHijos = null;
+          idNorma = null;
+          folioEncontrado = false;
         });
       }
     });

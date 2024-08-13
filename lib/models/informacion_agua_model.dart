@@ -36,9 +36,10 @@ class InformacionAguaModel {
   String? fechaMuestreo;
   String? horaRecepcion;
   String? horaEntrada;
+  int? idNorma;
   List<FoliosHijosModel>? puntosMuestreo;
 
-  InformacionAguaModel({required this.mensaje, this.folio, this.muestraIngresada, this.siralab, this.descarga, this.cliente, this.empresa, this.fechaMuestreo, this.horaRecepcion, this.horaEntrada, this.puntosMuestreo});
+  InformacionAguaModel({required this.mensaje, this.folio, this.muestraIngresada, this.siralab, this.descarga, this.cliente, this.empresa, this.fechaMuestreo, this.horaRecepcion, this.horaEntrada, this.idNorma, this.puntosMuestreo});
 
   factory InformacionAguaModel.fromJson(Map<String, dynamic> json){
     var lista = json['puntosMuestreo'] as List?;
@@ -55,6 +56,7 @@ class InformacionAguaModel {
         'fechaMuestreo': String? fechaMuestreo,
         'horaRecepcion': String? horaRecepcion,
         'horaEntrada': String? horaEntrada,
+        'idNorma': int? idNorma,
       } =>
         InformacionAguaModel(
           mensaje: mensaje,
@@ -68,6 +70,7 @@ class InformacionAguaModel {
           horaRecepcion: horaRecepcion,
           horaEntrada: horaEntrada,
           puntosMuestreo: puntosRespuesta,
+          idNorma: idNorma,
         ),
       _ => throw const FormatException('Error al cargar informacion'),
     };
