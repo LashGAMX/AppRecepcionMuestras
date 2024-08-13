@@ -216,8 +216,23 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(0),
                                   ),
-                                  child: Center(
-                                    child: Image.memory(base64Decode(listaImagenes![index].foto!), fit: BoxFit.fitWidth,),
+                                  child: GestureDetector(
+                                    onTap: (){
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            content: Hero(
+                                              tag: 'Imagen',
+                                              child: Image(image: MemoryImage(base64Decode(listaImagenes![index].foto!)), fit: BoxFit.fitWidth,),
+                                            ),
+                                          );
+                                        }
+                                      );
+                                    },
+                                    child: Center(
+                                      child: Image.memory(base64Decode(listaImagenes![index].foto!), fit: BoxFit.fitWidth,),
+                                    ),
                                   ),
                                 );
                               },
