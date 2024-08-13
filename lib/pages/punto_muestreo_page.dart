@@ -8,6 +8,7 @@ import 'package:recepcion_app/models/informacion_agua_model.dart';
 import 'package:recepcion_app/models/punto_agua_model.dart';
 
 List<PuntoAguaModel>? listaImagenes;
+bool cargando = false;
 
 class PuntoMuestreoPage extends StatefulWidget{
   final FoliosHijosModel puntoMuestreo;
@@ -26,14 +27,19 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
   void initState() {
     // TODO: implement initState
     listaImagenes = null;
+    cargando = false;
     getFotosPunto(widget.puntoMuestreo.idFolio!);
     super.initState();
   }
 
   getFotosPunto(int idSolicitud) async {
+    setState(() {
+      cargando = true;
+    });
     servicioAPI.getImagenesPunto(idSolicitud).then((value) {
       setState(() {
         listaImagenes = value;
+        cargando = false;
       });
     });
   }
@@ -194,33 +200,32 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
                     width: MediaQuery.sizeOf(context).width - 30,
                     child: Column(
                       children: [
-                        (listaImagenes != null) ?
-                        GridView.builder(
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 1.0,
-                            mainAxisSpacing: 8.0,
-                          ),
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemCount: listaImagenes!.length,
-                          itemBuilder: (context, index){
-                            // return Expanded(
-                            //   child: Image.file(listaImagenes![index]),
-                            // );
-                            return Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(0),
+                        (cargando == false) ?
+                          (listaImagenes != null && listaImagenes!.isNotEmpty) ?
+                            GridView.builder(
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 1.0,
+                                mainAxisSpacing: 8.0,
                               ),
-                              child: Center(
-                                child: Image.memory(base64Decode(listaImagenes![index].foto!), fit: BoxFit.fitWidth,),
-                                // child: Image.file(listaImagenes![index], fit: BoxFit.fitWidth,),
-                              ),
-                            );
-                          },
-                        )
-                          :
-                        const Text('Este punto de muestreo no tiene imágenes', softWrap: true,)
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: listaImagenes!.length,
+                              itemBuilder: (context, index){
+                                return Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(0),
+                                  ),
+                                  child: Center(
+                                    child: Image.memory(base64Decode(listaImagenes![index].foto!), fit: BoxFit.fitWidth,),
+                                  ),
+                                );
+                              },
+                            )
+                              :
+                            const Text('Este punto de muestreo no tiene imágenes', softWrap: true,)
+                            :
+                          const CircularProgressIndicator()
                       ],
                     ),
                   ),
