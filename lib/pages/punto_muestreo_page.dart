@@ -56,9 +56,14 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
       listaImagenes ??= [];
 
       listaImagenes!.add(PuntoAguaModel(foto: imagenBase64));
+      cargando = true;
       // listaImagenes!.add(File(imagenTomada.path));
     });
-    servicioAPI.setImagenPunto(widget.puntoMuestreo.idFolio!, imagenBase64);
+    servicioAPI.setImagenPunto(widget.puntoMuestreo.idFolio!, imagenBase64).then((value) {
+      setState(() {
+        cargando = false;
+      });
+    });
   }
 
   Future _elegirFotoDeBiblioteca() async {
@@ -73,10 +78,15 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
       listaImagenes ??= [];
 
       listaImagenes!.add(PuntoAguaModel(foto: imagenBase64));
+      cargando = true;
       // listaImagenes!.add(File(imagenElegida.path));
       // _imagenMostrada = File(imagenElegida.path);
     });
-    servicioAPI.setImagenPunto(widget.puntoMuestreo.idFolio!, imagenBase64);
+    servicioAPI.setImagenPunto(widget.puntoMuestreo.idFolio!, imagenBase64).then((value) {
+      setState(() {
+        cargando = false;
+      });
+    });
   }
 
   @override
@@ -202,40 +212,43 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
                       children: [
                         (cargando == false) ?
                           (listaImagenes != null && listaImagenes!.isNotEmpty) ?
-                            GridView.builder(
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                crossAxisSpacing: 1.0,
-                                mainAxisSpacing: 8.0,
-                              ),
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              itemCount: listaImagenes!.length,
-                              itemBuilder: (context, index){
-                                return Card(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(0),
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: (){
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                            content: Hero(
-                                              tag: 'Imagen',
-                                              child: Image(image: MemoryImage(base64Decode(listaImagenes![index].foto!)), fit: BoxFit.fitWidth,),
-                                            ),
-                                          );
-                                        }
-                                      );
-                                    },
-                                    child: Center(
-                                      child: Image.memory(base64Decode(listaImagenes![index].foto!), fit: BoxFit.fitWidth,),
+                            SizedBox(
+                              height: 130,
+                              child: GridView.builder(
+                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  crossAxisSpacing: 1.0,
+                                  mainAxisSpacing: 8.0,
+                                ),
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                itemCount: listaImagenes!.length,
+                                itemBuilder: (context, index){
+                                  return Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(0),
                                     ),
-                                  ),
-                                );
-                              },
+                                    child: GestureDetector(
+                                      onTap: (){
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              content: Hero(
+                                                tag: 'Imagen',
+                                                child: Image(image: MemoryImage(base64Decode(listaImagenes![index].foto!)), fit: BoxFit.fitWidth,),
+                                              ),
+                                            );
+                                          }
+                                        );
+                                      },
+                                      child: Center(
+                                        child: Image.memory(base64Decode(listaImagenes![index].foto!), fit: BoxFit.fitWidth, ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             )
                               :
                             const Text('Este punto de muestreo no tiene imágenes', softWrap: true,)

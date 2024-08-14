@@ -326,29 +326,31 @@ class _AguaPageState extends State<AguaPage>{
                                               initialDate: DateTime.parse('$fechaMuestreo'),
                                               firstDate: DateTime.parse('$fechaMuestreo'),
                                               // firstDate: DateTime.now().subtract(const Duration(days: 365 * 100)),
-                                              lastDate: DateTime.now().add(const Duration()),
+                                              lastDate: DateTime.now().add(const Duration(days: 30)),
                                             ).then((diaSeleccionado) {
                                               if(diaSeleccionado != null){
-                                                showTimePicker(
-                                                  context: context,
-                                                  initialTime: TimeOfDay.now(),
-                                                  // initialTime: TimeOfDay.fromDateTime(DateTime.parse('$horaRecepcion')),
-                                                ).then((horaSeleccionada) {
-                                                  if(horaSeleccionada != null) {
-                                                    DateTime fechaSeleccionada = DateTime(
-                                                      diaSeleccionado.year,
-                                                      diaSeleccionado.month,
-                                                      diaSeleccionado.day,
-                                                      horaSeleccionada.hour,
-                                                      horaSeleccionada.minute,
-                                                    );
-                                                    String fechaConvertida = '${fechaSeleccionada.year.toString()}-${fechaSeleccionada.month.toString().padLeft(2,'0')}-${fechaSeleccionada.day.toString().padLeft(2,'0')} ${fechaSeleccionada.hour.toString().padLeft(2,'0')}:${fechaSeleccionada.minute.toString().padLeft(2,'0')}:00';
-                                                    setState(() {
-                                                      horaRecepcion = fechaConvertida;
-                                                      // servicioAPI.upHoraRecepcion(folio!, 1, horaRecepcion!);
-                                                    });
-                                                  }
-                                                });
+                                                if(context.mounted){
+                                                  showTimePicker(
+                                                    context: context,
+                                                    initialTime: TimeOfDay.now(),
+                                                    // initialTime: TimeOfDay.fromDateTime(DateTime.parse('$horaRecepcion')),
+                                                  ).then((horaSeleccionada) {
+                                                    if(horaSeleccionada != null) {
+                                                      DateTime fechaSeleccionada = DateTime(
+                                                        diaSeleccionado.year,
+                                                        diaSeleccionado.month,
+                                                        diaSeleccionado.day,
+                                                        horaSeleccionada.hour,
+                                                        horaSeleccionada.minute,
+                                                      );
+                                                      String fechaConvertida = '${fechaSeleccionada.year.toString()}-${fechaSeleccionada.month.toString().padLeft(2,'0')}-${fechaSeleccionada.day.toString().padLeft(2,'0')} ${fechaSeleccionada.hour.toString().padLeft(2,'0')}:${fechaSeleccionada.minute.toString().padLeft(2,'0')}:00';
+                                                      setState(() {
+                                                        horaRecepcion = fechaConvertida;
+                                                        // servicioAPI.upHoraRecepcion(folio!, 1, horaRecepcion!);
+                                                      });
+                                                    }
+                                                  });
+                                                }
                                               }
                                             });
                                           } : null,
@@ -362,7 +364,7 @@ class _AguaPageState extends State<AguaPage>{
                                       // Text((horaEntrada != null)? '$horaEntrada' : 'N/A', style: TextStyle(color: Colors.grey.shade500),),
                                       Expanded(
                                         flex: 9,
-                                        child: Text((horaRecepcion != null)? '$horaEntrada' : 'N/A', style: TextStyle(color: Colors.grey.shade500),),
+                                        child: Text((horaEntrada != null)? '$horaEntrada' : 'N/A', style: TextStyle(color: Colors.grey.shade500),),
                                       ),
                                       Expanded(
                                         child: GestureDetector(
@@ -372,29 +374,31 @@ class _AguaPageState extends State<AguaPage>{
                                               initialDate: DateTime.parse('$fechaMuestreo'),
                                               firstDate: DateTime.parse('$fechaMuestreo'),
                                               // firstDate: DateTime.now().subtract(const Duration(days: 365 * 100)),
-                                              lastDate: DateTime.now(),
+                                              lastDate: DateTime.now().add(const Duration(days: 30)),
                                             ).then((diaSeleccionado){
                                               if(diaSeleccionado != null){
-                                                showTimePicker(
-                                                  context: context,
-                                                  initialTime: TimeOfDay.now(),
-                                                  // initialTime: TimeOfDay.fromDateTime(DateTime.parse('$horaEntrada')),
-                                                ).then((horaSeleccionada) {
-                                                  if(horaSeleccionada != null) {
-                                                    DateTime fechaSeleccionada = DateTime(
-                                                      diaSeleccionado.year,
-                                                      diaSeleccionado.month,
-                                                      diaSeleccionado.day,
-                                                      horaSeleccionada.hour,
-                                                      horaSeleccionada.minute,
-                                                    );
-                                                    String fechaConvertida = '${fechaSeleccionada.year.toString()}-${fechaSeleccionada.month.toString().padLeft(2,'0')}-${fechaSeleccionada.day.toString().padLeft(2,'0')} ${fechaSeleccionada.hour.toString().padLeft(2,'0')}:${fechaSeleccionada.minute.toString().padLeft(2,'0')}:00';
-                                                    setState(() {
-                                                      horaEntrada = fechaConvertida;
-                                                      // servicioAPI.upHoraRecepcion(folio!, 2, horaEntrada!);
-                                                    });
-                                                  }
-                                                });
+                                                if(context.mounted){
+                                                  showTimePicker(
+                                                    context: context,
+                                                    initialTime: TimeOfDay.now(),
+                                                    // initialTime: TimeOfDay.fromDateTime(DateTime.parse('$horaEntrada')),
+                                                  ).then((horaSeleccionada) {
+                                                    if(horaSeleccionada != null) {
+                                                      DateTime fechaSeleccionada = DateTime(
+                                                        diaSeleccionado.year,
+                                                        diaSeleccionado.month,
+                                                        diaSeleccionado.day,
+                                                        horaSeleccionada.hour,
+                                                        horaSeleccionada.minute,
+                                                      );
+                                                      String fechaConvertida = '${fechaSeleccionada.year.toString()}-${fechaSeleccionada.month.toString().padLeft(2,'0')}-${fechaSeleccionada.day.toString().padLeft(2,'0')} ${fechaSeleccionada.hour.toString().padLeft(2,'0')}:${fechaSeleccionada.minute.toString().padLeft(2,'0')}:00';
+                                                      setState(() {
+                                                        horaEntrada = fechaConvertida;
+                                                        // servicioAPI.upHoraRecepcion(folio!, 2, horaEntrada!);
+                                                      });
+                                                    }
+                                                  });
+                                                }
                                               }
                                             });
                                           } : null,
@@ -476,60 +480,63 @@ class _AguaPageState extends State<AguaPage>{
                     child: Column(
                       children: [
                         (foliosHijos != null) ?
-                        ListView.builder(
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemCount: foliosHijos?.length ?? 0,
-                          itemBuilder: (context, index) {
-                            final punto = foliosHijos![index];
-                            return Container(
-                              decoration: BoxDecoration(
-                                border: (index == foliosHijos!.length - 1)? null : const Border(bottom: BorderSide(width: 0.1),),
-                              ),
-                              child: ListTile(
-                                leading: Icon(Icons.do_not_disturb_on_total_silence_rounded, color: Theme.of(context).colorScheme.primary,),
-                                // leading: Text('${punto.idFolio}', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 14),),
-                                title: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text.rich(
-                                        TextSpan(
-                                          children: <TextSpan>[
-                                            TextSpan(
-                                              text: '${punto.idFolio} ',
-                                              style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold,),
-                                            ),
-                                            TextSpan(
-                                              text: '${punto.punto}',
-                                              style: const TextStyle(fontWeight: FontWeight.bold),
-                                            ),
-                                          ],
+                        SizedBox(
+                          height: 120,
+                          child: ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            itemCount: foliosHijos?.length ?? 0,
+                            itemBuilder: (context, index) {
+                              final punto = foliosHijos![index];
+                              return Container(
+                                decoration: BoxDecoration(
+                                  border: (index == foliosHijos!.length - 1)? null : const Border(bottom: BorderSide(width: 0.1),),
+                                ),
+                                child: ListTile(
+                                  leading: Icon(Icons.do_not_disturb_on_total_silence_rounded, color: Theme.of(context).colorScheme.primary,),
+                                  // leading: Text('${punto.idFolio}', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 14),),
+                                  title: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text.rich(
+                                          TextSpan(
+                                            children: <TextSpan>[
+                                              TextSpan(
+                                                text: '${punto.idFolio} ',
+                                                style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold,),
+                                              ),
+                                              TextSpan(
+                                                text: '${punto.punto}',
+                                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                          softWrap: true,
                                         ),
-                                        softWrap: true,
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
+                                  subtitle: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Conductividad: ${punto.conductividad ?? 'Sin conductividad'}', softWrap: true,),
+                                      // Text('Cloruros: ${punto.cloruros ?? 'Sin cloruros'}', softWrap: true,),
+                                      obtenerCloruros(punto.cloruros),
+                                    ],
+                                  ),
+                                  trailing: IconButton(
+                                    icon: Icon(Icons.arrow_forward_ios, color: Theme.of(context).colorScheme.primary,),
+                                    onPressed: (){
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => PuntoMuestreoPage(puntoMuestreo: punto)),
+                                      );
+                                    },
+                                  ),
                                 ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Conductividad: ${punto.conductividad ?? 'Sin conductividad'}', softWrap: true,),
-                                    // Text('Cloruros: ${punto.cloruros ?? 'Sin cloruros'}', softWrap: true,),
-                                    obtenerCloruros(punto.cloruros),
-                                  ],
-                                ),
-                                trailing: IconButton(
-                                  icon: Icon(Icons.arrow_forward_ios, color: Theme.of(context).colorScheme.primary,),
-                                  onPressed: (){
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => PuntoMuestreoPage(puntoMuestreo: punto)),
-                                    );
-                                  },
-                                ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         )
                             :
                         const Row(
