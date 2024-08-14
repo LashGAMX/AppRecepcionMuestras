@@ -161,6 +161,55 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
                             ),
                           ],
                         ),
+                        const SizedBox(height: 8,),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Conductividad', style: TextStyle(fontWeight: FontWeight.w500), softWrap: true,),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: Text('${widget.puntoMuestreo.conductividad ?? 'Sin conductividad'}', style: TextStyle(color: Colors.grey.shade500), softWrap: true,),
+                                      ),
+                                      // Expanded(
+                                      //   child: IconButton(
+                                      //     onPressed: (){},
+                                      //     icon: Icon(Icons.edit, size: 20, color: Theme.of(context).colorScheme.primary,),
+                                      //   ),
+                                      // )
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Cloruros', style: TextStyle(fontWeight: FontWeight.w500), softWrap: true,),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: obtenerCloruros(widget.puntoMuestreo.cloruros),
+                                      ),
+                                      // Expanded(
+                                      //   child: IconButton(
+                                      //     onPressed: (){},
+                                      //     icon: Icon(Icons.edit, size: 20, color: Theme.of(context).colorScheme.primary,),
+                                      //   ),
+                                      // ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
                       ],
                     ),
                   ),
@@ -264,5 +313,20 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
         ),
       ),
     );
+  }
+
+  Widget obtenerCloruros(int? cloruros){
+    switch(cloruros){
+      case 499:
+        return Text('< 500', style: TextStyle(color: Colors.grey.shade500), softWrap: true,);
+      case 500:
+        return Text('500', style: TextStyle(color: Colors.grey.shade500), softWrap: true,);
+      case 1000:
+        return Text('1000', style: TextStyle(color: Colors.grey.shade500), softWrap: true,);
+      case 1500:
+        return Text('1000', style: TextStyle(color: Colors.grey.shade500), softWrap: true,);
+      default:
+        return Text('Sin cloruros', style: TextStyle(color: Colors.grey.shade500), softWrap: true,);
+    }
   }
 }
