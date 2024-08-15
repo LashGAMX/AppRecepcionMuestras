@@ -481,7 +481,7 @@ class _AguaPageState extends State<AguaPage>{
                       children: [
                         (foliosHijos != null) ?
                         SizedBox(
-                          height: 120,
+                          height: 100,
                           child: ListView.builder(
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
@@ -556,75 +556,75 @@ class _AguaPageState extends State<AguaPage>{
                   ),
                 ],
               ),
-              // const SizedBox(height: 15,),
-              // const Row(
-              //   children: [
-              //     Padding(padding: EdgeInsets.only(left: 15),),
-              //     Text('Parametros', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-              //   ],
-              // ),
-              // const SizedBox(height: 10,),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: [
-              //     Container(
-              //       padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
-              //       decoration: BoxDecoration(
-              //         borderRadius: const BorderRadius.all(Radius.circular(15),),
-              //         color: Colors.white,
-              //         boxShadow: [
-              //           BoxShadow(
-              //             color: Colors.grey.withOpacity(0.2),
-              //             spreadRadius: 5,
-              //             blurRadius: 7,
-              //             offset: const Offset(0, 3),
-              //           ),
-              //         ],
-              //       ),
-              //       width: MediaQuery.of(context).size.width - 30,
-              //       child: Column(
-              //         children: [
-              //           Row(
-              //             children: [
-              //               Flexible(
-              //                 fit: FlexFit.tight,
-              //                 child: SizedBox(
-              //                   height: 50,
-              //                   child: ElevatedButton(
-              //                     onPressed: (parametrosGenerados == null)? null : (){},
-              //                     style: ButtonStyle(
-              //                       backgroundColor: WidgetStateProperty.resolveWith((states){
-              //                         if(states.contains(WidgetState.pressed)){
-              //                           return const Color.fromRGBO(0, 168, 23, 1);
-              //                         }
-              //                         if(states.contains(WidgetState.disabled)){
-              //                           return const Color.fromRGBO(0, 168, 89, 0.4);
-              //                         }
-              //                         return const Color.fromRGBO(0, 168, 80, 1);
-              //                       }),
-              //                       shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-              //                         const RoundedRectangleBorder(
-              //                           borderRadius: BorderRadius.all(Radius.circular(8)),
-              //                         ),
-              //                       ),
-              //                       elevation: WidgetStateProperty.resolveWith((states){
-              //                         if(states.contains(WidgetState.disabled)){
-              //                           return 0;
-              //                         }
-              //                         return 8;
-              //                       }),
-              //                     ),
-              //                     child: const Text('Generar Codigos', style: TextStyle(color: Colors.white),),
-              //                   ),
-              //                 ),
-              //               ),
-              //             ],
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //   ],
-              // ),
+              const SizedBox(height: 15,),
+              const Row(
+                children: [
+                  Padding(padding: EdgeInsets.only(left: 15),),
+                  Text('Parametros', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                ],
+              ),
+              const SizedBox(height: 10,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(15),),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    width: MediaQuery.of(context).size.width - 30,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Flexible(
+                              fit: FlexFit.tight,
+                              child: SizedBox(
+                                height: 50,
+                                child: ElevatedButton(
+                                  onPressed: (parametrosGenerados == null)? null : (){},
+                                  style: ButtonStyle(
+                                    backgroundColor: WidgetStateProperty.resolveWith((states){
+                                      if(states.contains(WidgetState.pressed)){
+                                        return const Color.fromRGBO(0, 168, 23, 1);
+                                      }
+                                      if(states.contains(WidgetState.disabled)){
+                                        return const Color.fromRGBO(0, 168, 89, 0.4);
+                                      }
+                                      return const Color.fromRGBO(0, 168, 80, 1);
+                                    }),
+                                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                      const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                                      ),
+                                    ),
+                                    elevation: WidgetStateProperty.resolveWith((states){
+                                      if(states.contains(WidgetState.disabled)){
+                                        return 0;
+                                      }
+                                      return 8;
+                                    }),
+                                  ),
+                                  child: const Text('Generar Codigos', style: TextStyle(color: Colors.white),),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),

@@ -50,15 +50,17 @@ class _UserPageState extends State<UserPage>{
   @override
   void initState() {
     // TODO: implement initState
+    finalIdUsuario = null;
+    finalAvatar = null;
+    finalUser = null;
+    finalNombre = null;
+    finalIniciales = null;
     getUser();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context){
-    // if(datosObtenidos == false){
-    //   getUser();
-    // }
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.grey.shade100,
@@ -117,7 +119,7 @@ class _UserPageState extends State<UserPage>{
                             children: [
                               Transform.translate(
                                 offset: const Offset(0, -100/2),
-                                child: (finalAvatar != '')?
+                                child: (finalAvatar != null)?
                                   CircleAvatar(
                                     backgroundColor: Colors.white,
                                     radius: 45,

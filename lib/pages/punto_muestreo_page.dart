@@ -8,6 +8,9 @@ import 'package:recepcion_app/models/informacion_agua_model.dart';
 import 'package:recepcion_app/models/punto_agua_model.dart';
 
 List<PuntoAguaModel>? listaImagenes;
+String? fechaFinMuestreo;
+String? fechaConformacion;
+String? procedencia;
 bool cargando = false;
 
 class PuntoMuestreoPage extends StatefulWidget{
@@ -27,9 +30,23 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
   void initState() {
     // TODO: implement initState
     listaImagenes = null;
+    fechaFinMuestreo = null;
+    fechaConformacion = null;
+    procedencia = null;
     cargando = false;
+    getDatosPunto(widget.puntoMuestreo.idFolio!);
     getFotosPunto(widget.puntoMuestreo.idFolio!);
     super.initState();
+  }
+
+  getDatosPunto(int idSolicitud) async {
+    servicioAPI.getDatosPunto(idSolicitud).then((value) {
+      setState(() {
+        fechaFinMuestreo = value.fechaFinMuestreo;
+        fechaConformacion = value.fechaConformacion;
+        procedencia = value.procedencia;
+      });
+    });
   }
 
   getFotosPunto(int idSolicitud) async {
@@ -166,6 +183,35 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
                           children: [
                             Expanded(
                               child: Column(
+                                children: [
+                                  const Text('Fecha fin muestreo', style: TextStyle(fontWeight: FontWeight.w500), softWrap: true,),
+                                  Text(fechaFinMuestreo ?? 'N/A', style: TextStyle(color: Colors.grey.shade500), softWrap: true,),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  const Text('Fecha de conformación', style: TextStyle(fontWeight: FontWeight.w500), softWrap: true,),
+                                  Text(fechaConformacion ?? 'N/A', style: TextStyle(color: Colors.grey.shade500), softWrap: true,),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  const Text('Procedencia', style: TextStyle(fontWeight: FontWeight.w500), softWrap: true,),
+                                  Text(procedencia ?? 'N/A', style: TextStyle(color: Colors.grey.shade500), softWrap: true,),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8,),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text('Conductividad', style: TextStyle(fontWeight: FontWeight.w500), softWrap: true,),
@@ -175,12 +221,12 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
                                         flex: 3,
                                         child: Text('${widget.puntoMuestreo.conductividad ?? 'Sin conductividad'}', style: TextStyle(color: Colors.grey.shade500), softWrap: true,),
                                       ),
-                                      // Expanded(
-                                      //   child: IconButton(
-                                      //     onPressed: (){},
-                                      //     icon: Icon(Icons.edit, size: 20, color: Theme.of(context).colorScheme.primary,),
-                                      //   ),
-                                      // )
+                                      Expanded(
+                                        child: IconButton(
+                                          onPressed: (){},
+                                          icon: Icon(Icons.edit, size: 20, color: Theme.of(context).colorScheme.primary,),
+                                        ),
+                                      )
                                     ],
                                   ),
                                 ],
@@ -197,12 +243,12 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
                                         flex: 3,
                                         child: obtenerCloruros(widget.puntoMuestreo.cloruros),
                                       ),
-                                      // Expanded(
-                                      //   child: IconButton(
-                                      //     onPressed: (){},
-                                      //     icon: Icon(Icons.edit, size: 20, color: Theme.of(context).colorScheme.primary,),
-                                      //   ),
-                                      // ),
+                                      Expanded(
+                                        child: IconButton(
+                                          onPressed: (){},
+                                          icon: Icon(Icons.edit, size: 20, color: Theme.of(context).colorScheme.primary,),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ],

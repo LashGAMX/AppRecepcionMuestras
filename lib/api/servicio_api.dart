@@ -131,4 +131,23 @@ class ServicioAPI {
       throw Exception('Error al subir la foto');
     }
   }
+
+  Future<DetallesPunto> getDatosPunto(int idSolicitud) async {
+    final response = await http.post(
+      Uri.parse('${urlBase}getDatosPunto'),
+      headers: <String, String>{
+        'Content-type': 'application/json; charset=UTF-8'
+      },
+      body: jsonEncode(<String, dynamic>{
+        'idSolicitud': idSolicitud,
+      }),
+    );
+
+    if(response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500) {
+      return DetallesPunto.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+    }
+    else {
+      throw Exception('Error al mostrar datos');
+    }
+  }
 }

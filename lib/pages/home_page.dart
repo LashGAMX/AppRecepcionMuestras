@@ -18,6 +18,12 @@ class _HomePageState extends State<HomePage>{
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final String urlBaseStorage = 'http://sistemasofia.ddns.net:85/sofia/public/storage/';
 
+  @override
+  void initState(){
+    getUsuario();
+    super.initState();
+  }
+
   getUsuario() async {
     SharedPreferences variablesSesion = await SharedPreferences.getInstance();
     int? idUsuario = variablesSesion.getInt('idUsuario');
@@ -37,7 +43,6 @@ class _HomePageState extends State<HomePage>{
 
   @override
   Widget build(BuildContext context){
-    getUsuario();
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.grey.shade100,
@@ -63,7 +68,7 @@ class _HomePageState extends State<HomePage>{
                           MaterialPageRoute(builder: (context) => const UserPage()),
                       );
                     },
-                      child: (finalAvatar != '')? CircleAvatar(radius: 30, backgroundImage: NetworkImage('$urlBaseStorage$finalAvatar'), ) : const Icon(Icons.account_circle_outlined, size: 60,),
+                      child: (finalAvatar != null)? CircleAvatar(radius: 30, backgroundImage: NetworkImage('$urlBaseStorage$finalAvatar'), ) : const Icon(Icons.account_circle_outlined, size: 60,),
                   ),
                 ],
               ),
