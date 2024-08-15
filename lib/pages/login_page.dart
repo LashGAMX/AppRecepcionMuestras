@@ -20,6 +20,19 @@ class _LoginPageState extends State<LoginPage>{
   bool esconderContrasena = true;
   bool errorSesion = false;
 
+  @override
+  void initState() {
+    getSesionIniciada().then((value) {
+      if(value == true){
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      }
+    });
+    super.initState();
+  }
+
   void _mostrarContrasena(){
     setState(() {
       esconderContrasena = !esconderContrasena;
