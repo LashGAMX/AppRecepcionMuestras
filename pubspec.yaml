@@ -38,6 +38,7 @@ dependencies:
   http: ^1.2.1
   shared_preferences: ^2.2.3
   image_picker: ^1.1.2
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
@@ -52,6 +53,12 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+
+flutter_launcher_icons:
+  android: true
+  image_path_android: "assets/images/logo_app.jpeg"
+  ios: true
+  image_path_ios: "assets/images/logo_app.jpeg"
 
 # The following section is specific to Flutter packages.
 flutter:
