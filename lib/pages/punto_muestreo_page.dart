@@ -8,6 +8,7 @@ import 'package:recepcion_app/models/informacion_agua_model.dart';
 import 'package:recepcion_app/models/punto_agua_model.dart';
 
 List<PuntoAguaModel>? listaImagenes;
+int? opcionCloruros;
 String? fechaFinMuestreo;
 String? fechaConformacion;
 String? procedencia;
@@ -15,8 +16,9 @@ bool cargando = false;
 
 class PuntoMuestreoPage extends StatefulWidget{
   final FoliosHijosModel puntoMuestreo;
+  final bool muestraIngresada;
 
-  const PuntoMuestreoPage({super.key, required this.puntoMuestreo});
+  const PuntoMuestreoPage({super.key, required this.puntoMuestreo, required this.muestraIngresada});
 
   @override
   State<PuntoMuestreoPage> createState() => _PuntoMuestreoPageState();
@@ -24,6 +26,10 @@ class PuntoMuestreoPage extends StatefulWidget{
 
 class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  late TextEditingController _conductividadController;
+  List<Opciones> opciones = Opciones.todasOpciones;
+  List<DropdownMenuItem<Opciones>>? _opciones;
+  Opciones? _elegida;
   ServicioAPI servicioAPI = ServicioAPI();
 
   @override
@@ -34,10 +40,44 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
     fechaConformacion = null;
     procedencia = null;
     cargando = false;
+    _opciones = opciones.map<DropdownMenuItem<Opciones>>(
+        (Opciones opcion){
+          return DropdownMenuItem<Opciones>(
+            value: opcion,
+            child: Text(opcion.texto!),
+          );
+        }
+    ).toList();
+    switch(widget.puntoMuestreo.cloruros){
+      case 499:
+        opcionCloruros = 1;
+        break;
+      case 500:
+        opcionCloruros = 2;
+        break;
+      case 1000:
+        opcionCloruros = 3;
+        break;
+      case 1500:
+        opcionCloruros = 4;
+        break;
+      default:
+        opcionCloruros = 0;
+        break;
+    }
+    _elegida = opciones[opcionCloruros!];
+    _conductividadController = TextEditingController(text: widget.puntoMuestreo.conductividad?.toString());
     getDatosPunto(widget.puntoMuestreo.idFolio!);
     getFotosPunto(widget.puntoMuestreo.idFolio!);
     super.initState();
   }
+
+  // @override
+  // void dispose() {
+  //   _conductividadController.dispose();
+  //   _clorurosController.dispose();
+  //   super.dispose();
+  // }
 
   getDatosPunto(int idSolicitud) async {
     servicioAPI.getDatosPunto(idSolicitud).then((value) {
@@ -121,7 +161,11 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
                   const Padding(padding: EdgeInsets.only(left: 10),),
                   GestureDetector(
                     onTap: (){
-                      Navigator.pop(context);
+                      setState(() {
+                        // print(widget.puntoMuestreo.conductividad);
+                        widget.puntoMuestreo.conductividad = int.tryParse(_conductividadController.text);
+                      });
+                      Navigator.pop(context, widget.puntoMuestreo);
                     },
                     child: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.primary, size: 30,),
                   ),
@@ -218,38 +262,38 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
                                   Row(
                                     children: [
                                       Expanded(
-                                        flex: 3,
-                                        child: Text('${widget.puntoMuestreo.conductividad ?? 'Sin conductividad'}', style: TextStyle(color: Colors.grey.shade500), softWrap: true,),
-                                      ),
-                                      Expanded(
-                                        child: IconButton(
-                                          onPressed: (){},
-                                          icon: Icon(Icons.edit, size: 20, color: Theme.of(context).colorScheme.primary,),
+                                        child: TextField(
+                                          controller: _conductividadController,
+                                          enabled: (widget.muestraIngresada == false)? true : false,
+                                          keyboardType: TextInputType.number,
+                                          decoration: InputDecoration(
+                                            // border: const OutlineInputBorder(),
+                                            hintText: (widget.puntoMuestreo.conductividad == null)? 'Sin conductividad' : 'Conductividad',
+                                          ),
                                         ),
-                                      )
+                                      ),
                                     ],
                                   ),
                                 ],
                               ),
                             ),
+                            const Padding(padding: EdgeInsets.symmetric(horizontal: 10),),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text('Cloruros', style: TextStyle(fontWeight: FontWeight.w500), softWrap: true,),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 3,
-                                        child: obtenerCloruros(widget.puntoMuestreo.cloruros),
-                                      ),
-                                      Expanded(
-                                        child: IconButton(
-                                          onPressed: (){},
-                                          icon: Icon(Icons.edit, size: 20, color: Theme.of(context).colorScheme.primary,),
-                                        ),
-                                      ),
-                                    ],
+                                  DropdownButton<Opciones>(
+                                    isExpanded: true,
+                                    underline: const SizedBox(),
+                                    value: _elegida,
+                                    items: _opciones,
+                                    onChanged: (widget.muestraIngresada == false)? (valor) {
+                                      setState(() {
+                                        _elegida = valor;
+                                        widget.puntoMuestreo.cloruros = valor!.valor;
+                                      });
+                                    } : null,
                                   ),
                                 ],
                               ),
@@ -375,4 +419,19 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
         return Text('Sin cloruros', style: TextStyle(color: Colors.grey.shade500), softWrap: true,);
     }
   }
+}
+
+class Opciones {
+  int? valor;
+  String? texto;
+
+  Opciones({this.valor, this.texto});
+
+  static List<Opciones> get todasOpciones => [
+    Opciones(valor: null, texto: 'Sin cloruros'),
+    Opciones(valor: 499, texto: '< 500'),
+    Opciones(valor: 500, texto: '500'),
+    Opciones(valor: 1000, texto: '1000'),
+    Opciones(valor: 1500, texto: '>1000'),
+  ];
 }

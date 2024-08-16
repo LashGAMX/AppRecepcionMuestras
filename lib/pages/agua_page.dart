@@ -22,7 +22,8 @@ bool? folioEncontrado;
 int? idNorma;
 
 class AguaPage extends StatefulWidget{
-  const AguaPage({super.key});
+  final FoliosHijosModel? regresado;
+  const AguaPage({super.key, this.regresado});
 
   @override
   State<AguaPage> createState() => _AguaPageState();
@@ -526,11 +527,18 @@ class _AguaPageState extends State<AguaPage>{
                                   ),
                                   trailing: IconButton(
                                     icon: Icon(Icons.arrow_forward_ios, color: Theme.of(context).colorScheme.primary,),
-                                    onPressed: (){
-                                      Navigator.push(
+                                    onPressed: () async {
+                                      final vuelta = await Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => PuntoMuestreoPage(puntoMuestreo: punto)),
+                                        MaterialPageRoute(builder: (context) => PuntoMuestreoPage(puntoMuestreo: punto, muestraIngresada: muestraIngresada!,)),
                                       );
+
+                                      if (vuelta != null){
+                                        setState(() {
+                                          foliosHijos![index].conductividad = vuelta.conductividad;
+                                          foliosHijos![index].cloruros = vuelta.cloruros;
+                                        });
+                                      }
                                     },
                                   ),
                                 ),
