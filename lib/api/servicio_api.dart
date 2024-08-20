@@ -68,6 +68,29 @@ class ServicioAPI {
     }
   }
 
+  Future<List<ParametrosModel>?> getParametros(String folioMandado) async {
+    final response = await http.post(
+      Uri.parse('${urlBase}getParametros'),
+      headers: <String, String>{
+        'Content-type': 'application/json; charset=UTF-8'
+      },
+      body: jsonEncode(<String, dynamic>{
+        'folio': folioMandado,
+      }),
+    );
+
+    if(response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500){
+      var respuesta = jsonDecode(response.body) as Map<String, dynamic>;
+      var lista = respuesta['parametros'] as List?;
+      List<ParametrosModel>? listaParametros = lista?.map((i) => ParametrosModel.fromJson(i)).toList();
+
+      return listaParametros;
+    }
+    else{
+      throw Exception('Error al regresar parametros');
+    }
+  }
+
   Future<bool> upHoraRecepcion(String folio, int tipoHora, String hora) async {
     final response = await http.post(
       Uri.parse('${urlBase}upHoraRecepcion'),

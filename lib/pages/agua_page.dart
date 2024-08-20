@@ -18,8 +18,10 @@ String? fechaConformacion;
 String? procedencia;
 String? parametrosGenerados;
 List<FoliosHijosModel>? foliosHijos;
+List<ParametrosModel>? parametros;
 bool? folioEncontrado;
 int? idNorma;
+bool cargandoParametros = false;
 
 class AguaPage extends StatefulWidget{
   final FoliosHijosModel? regresado;
@@ -53,6 +55,7 @@ class _AguaPageState extends State<AguaPage>{
     procedencia = null;
     parametrosGenerados = null;
     foliosHijos = null;
+    parametros = null;
     idNorma = null;
     folioEncontrado = false;
     super.initState();
@@ -76,6 +79,7 @@ class _AguaPageState extends State<AguaPage>{
           idNorma = value.idNorma;
           folioEncontrado = true;
         });
+        getParametros(folioMandado);
       }
       else{
         setState(() {
@@ -93,10 +97,23 @@ class _AguaPageState extends State<AguaPage>{
           fechaConformacion = null;
           procedencia = null;
           foliosHijos = null;
+          parametros = null;
           idNorma = null;
           folioEncontrado = false;
         });
       }
+    });
+  }
+
+  getParametros(String folioMandado) async {
+    setState(() {
+      cargandoParametros = true;
+    });
+    servicioAPI.getParametros(folioMandado).then((value) {
+      setState(() {
+        parametros = value;
+        cargandoParametros = false;
+      });
     });
   }
 
@@ -413,40 +430,6 @@ class _AguaPageState extends State<AguaPage>{
                             ),
                           ],
                         ),
-                        // const SizedBox(height: 10,),
-                        // Row(
-                        //   children: [
-                        //     Expanded(
-                        //       child: Column(
-                        //         crossAxisAlignment: CrossAxisAlignment.start,
-                        //         children: [
-                        //           const Text('Fecha fin muestreo', style: TextStyle(fontWeight: FontWeight.w500),),
-                        //           Text('dd/mm/aaaa --:-- ----', style: TextStyle(color: Colors.grey.shade500),),
-                        //         ],
-                        //       ),
-                        //     ),
-                        //     const Padding(padding: EdgeInsets.only(left: 8),),
-                        //     Expanded(
-                        //       child: Column(
-                        //         crossAxisAlignment: CrossAxisAlignment.start,
-                        //         children: [
-                        //           const Text('Fecha conformación', style: TextStyle(fontWeight: FontWeight.w500),),
-                        //           Text('dd/mm/aaaa --:-- ----', style: TextStyle(color: Colors.grey.shade500),),
-                        //         ],
-                        //       ),
-                        //     ),
-                        //     const Padding(padding: EdgeInsets.only(left: 8),),
-                        //     Expanded(
-                        //       child: Column(
-                        //         crossAxisAlignment: CrossAxisAlignment.start,
-                        //         children: [
-                        //           const Text('Procedencia', style: TextStyle(fontWeight: FontWeight.w500),),
-                        //           Text('N/A', style: TextStyle(color: Colors.grey.shade500),),
-                        //         ],
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
                       ],
                     ),
                   ),
@@ -553,12 +536,6 @@ class _AguaPageState extends State<AguaPage>{
                             Text('No hay puntos de muestreo que mostrar', style: TextStyle(fontSize: 15, ),),
                           ],
                         ),
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.center,
-                        //   children: [
-                        //     Text('No hay puntos de muestreo que mostrar', style: TextStyle(fontSize: 15, ),),
-                        //   ],
-                        // ),
                       ],
                     ),
                   ),
@@ -625,6 +602,56 @@ class _AguaPageState extends State<AguaPage>{
                                   child: const Text('Generar Codigos', style: TextStyle(color: Colors.white),),
                                 ),
                               ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 15,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Column(
+                              children: [
+                                (cargandoParametros == false) ?
+                                  (parametros != null && parametros!.isNotEmpty) ?
+                                      SizedBox(
+                                        height: 250,
+                                        width: MediaQuery.of(context).size.width - 80,
+                                        child: ListView.builder(
+                                          scrollDirection: Axis.vertical,
+                                          shrinkWrap: true,
+                                          itemCount: parametros?.length ?? 0,
+                                          itemBuilder: (context, index){
+                                            final parametro = parametros![index];
+                                            return Container(
+                                              decoration: BoxDecoration(
+                                                border: (index == parametros!.length - 1)? null : const Border(bottom: BorderSide(width: 0.2),),
+                                              ),
+                                              child: ListTile(
+                                                title: IntrinsicHeight(
+                                                  child: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        flex: 4,
+                                                        child: Text(parametro.codigo ?? 'NULL', softWrap: true,),
+                                                      ),
+                                                      const VerticalDivider(),
+                                                      Expanded(
+                                                        flex: 6,
+                                                        child: Text(parametro.parametro ?? 'NULL', softWrap: true,),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      )
+                                        :
+                                      const Text('No hay parametros por mostrar', softWrap: true,)
+                                    :
+                                  const CircularProgressIndicator()
+                              ],
                             ),
                           ],
                         ),

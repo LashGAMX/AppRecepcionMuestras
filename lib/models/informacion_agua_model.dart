@@ -1,3 +1,24 @@
+class ParametrosModel{
+  String? codigo;
+  String? parametro;
+
+  ParametrosModel({this.codigo, this.parametro});
+
+  factory ParametrosModel.fromJson(Map<String, dynamic> json){
+    return switch(json){
+      {
+        'Codigo': String? codigo,
+        'Parametro': String? parametro,
+      } =>
+        ParametrosModel(
+          codigo: codigo,
+          parametro: parametro,
+        ),
+      _ => throw const FormatException('Error cargando códigos'),
+    };
+  }
+}
+
 class FoliosHijosModel{
   int? idFolio;
   String? punto;
@@ -38,12 +59,15 @@ class InformacionAguaModel {
   String? horaEntrada;
   int? idNorma;
   List<FoliosHijosModel>? puntosMuestreo;
+  List<ParametrosModel>? parametros;
 
-  InformacionAguaModel({required this.mensaje, this.folio, this.muestraIngresada, this.siralab, this.descarga, this.cliente, this.empresa, this.fechaMuestreo, this.horaRecepcion, this.horaEntrada, this.idNorma, this.puntosMuestreo});
+  InformacionAguaModel({required this.mensaje, this.folio, this.muestraIngresada, this.siralab, this.descarga, this.cliente, this.empresa, this.fechaMuestreo, this.horaRecepcion, this.horaEntrada, this.idNorma, this.puntosMuestreo, this.parametros});
 
   factory InformacionAguaModel.fromJson(Map<String, dynamic> json){
     var lista = json['puntosMuestreo'] as List?;
     List<FoliosHijosModel>? puntosRespuesta = lista?.map((i) => FoliosHijosModel.fromJson(i)).toList();
+    var listaParametros = json['parametros'] as List?;
+    List<ParametrosModel>? parametrosRespuesta = listaParametros?.map((i) => ParametrosModel.fromJson(i)).toList();
     return switch(json) {
       {
         'mensaje': String mensaje,
@@ -70,6 +94,7 @@ class InformacionAguaModel {
           horaRecepcion: horaRecepcion,
           horaEntrada: horaEntrada,
           puntosMuestreo: puntosRespuesta,
+          parametros: parametrosRespuesta,
           idNorma: idNorma,
         ),
       _ => throw const FormatException('Error al cargar informacion'),
