@@ -16,7 +16,7 @@ String? horaEntrada;
 String? fechaFinMuestreo;
 String? fechaConformacion;
 String? procedencia;
-String? parametrosGenerados;
+bool? parametrosGenerados;
 List<FoliosHijosModel>? foliosHijos;
 List<ParametrosModel>? parametros;
 bool? folioEncontrado;
@@ -96,6 +96,7 @@ class _AguaPageState extends State<AguaPage>{
           fechaFinMuestreo = null;
           fechaConformacion = null;
           procedencia = null;
+          parametrosGenerados = null;
           foliosHijos = null;
           parametros = null;
           idNorma = null;
@@ -112,6 +113,12 @@ class _AguaPageState extends State<AguaPage>{
     servicioAPI.getParametros(folioMandado).then((value) {
       setState(() {
         parametros = value;
+        if(parametros != null && parametros!.isNotEmpty){
+          parametrosGenerados = true;
+        }
+        else if(parametros != null && parametros!.isEmpty){
+          parametrosGenerados = false;
+        }
         cargandoParametros = false;
       });
     });
@@ -576,7 +583,7 @@ class _AguaPageState extends State<AguaPage>{
                               child: SizedBox(
                                 height: 50,
                                 child: ElevatedButton(
-                                  onPressed: (parametrosGenerados == null)? null : (){},
+                                  onPressed: (parametrosGenerados != null && parametrosGenerados == false)? (){} : null,
                                   style: ButtonStyle(
                                     backgroundColor: WidgetStateProperty.resolveWith((states){
                                       if(states.contains(WidgetState.pressed)){
