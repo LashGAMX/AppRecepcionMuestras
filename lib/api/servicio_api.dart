@@ -188,9 +188,6 @@ class ServicioAPI {
       }),
     );
 
-    print(response.statusCode);
-    print(response.body);
-
     if(response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500) {
       var respuesta = jsonDecode(response.body) as Map<String, dynamic>;
 

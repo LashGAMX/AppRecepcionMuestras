@@ -820,6 +820,7 @@ class _AguaPageState extends State<AguaPage>{
                   ),
                 ],
               ),
+              const SizedBox(height: 15,),
             ],
           ),
         ),
