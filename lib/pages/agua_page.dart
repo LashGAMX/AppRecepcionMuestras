@@ -4,8 +4,10 @@ import 'package:recepcion_app/models/informacion_agua_model.dart';
 import 'package:recepcion_app/pages/punto_muestreo_page.dart';
 
 bool errorEncontrar = false;
+int? idSolicitud;
 String? folio;
 bool? muestraIngresada;
+bool? codigosGenerados;
 bool? siralab;
 String? descarga;
 String? cliente;
@@ -22,6 +24,8 @@ List<ParametrosModel>? parametros;
 bool? folioEncontrado;
 int? idNorma;
 bool cargandoParametros = false;
+bool condiciones = false;
+bool historial = false;
 
 class AguaPage extends StatefulWidget{
   final FoliosHijosModel? regresado;
@@ -41,8 +45,10 @@ class _AguaPageState extends State<AguaPage>{
   void initState() {
     // TODO: implement initState
     errorEncontrar = false;
+    idSolicitud = null;
     folio = null;
     muestraIngresada = null;
+    codigosGenerados = null;
     siralab = null;
     descarga = null;
     cliente = null;
@@ -58,6 +64,9 @@ class _AguaPageState extends State<AguaPage>{
     parametros = null;
     idNorma = null;
     folioEncontrado = false;
+    cargandoParametros = false;
+    condiciones = false;
+    historial = false;
     super.initState();
   }
 
@@ -66,8 +75,10 @@ class _AguaPageState extends State<AguaPage>{
       if(value.mensaje == 'exito'){
         setState(() {
           errorEncontrar = false;
+          idSolicitud = value.idSolicitud;
           folio = value.folio;
           muestraIngresada = value.muestraIngresada;
+          codigosGenerados = value.codigosGenerados;
           siralab = value.siralab;
           descarga = value.descarga;
           cliente = value.cliente;
@@ -84,8 +95,10 @@ class _AguaPageState extends State<AguaPage>{
       else{
         setState(() {
           errorEncontrar = true;
+          idSolicitud = null;
           folio = null;
           muestraIngresada = null;
+          codigosGenerados = null;
           siralab = null;
           descarga = null;
           cliente = null;
@@ -101,6 +114,9 @@ class _AguaPageState extends State<AguaPage>{
           parametros = null;
           idNorma = null;
           folioEncontrado = false;
+          cargandoParametros = false;
+          condiciones = false;
+          historial = false;
         });
       }
     });
@@ -126,6 +142,75 @@ class _AguaPageState extends State<AguaPage>{
 
   upHoraRecepcion(String folio, int tipoHora, String hora) async {
     servicioAPI.upHoraRecepcion(folio, tipoHora, hora);
+  }
+
+  setCodigos() async {
+    if(idNorma! == 27){
+      bool errorNorma = false;
+      for (FoliosHijosModel folio in foliosHijos!){
+        if(folio.conductividad == null || folio.cloruros == null){
+          errorNorma = true;
+        }
+      }
+      if(errorNorma == true){
+        if(context.mounted){
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  content: SizedBox(
+                    height: 150,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Error al generar códigos', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500), softWrap: true,),
+                        const SizedBox(height: 20,),
+                        const Text('Los puntos de muestreo deben tener conductividad y cloruros', softWrap: true,),
+                        const SizedBox(height: 10,),
+                        Row(
+                          children: [
+                            const Expanded(child: SizedBox()),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: (){
+                                  Navigator.of(context, rootNavigator: true).pop();
+                                },
+                                child: const Text('Entendido'),
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+          );
+        }
+      }
+      else{
+        List<int?> conductividades = [];
+        List<int?> cloruros = [];
+        for (FoliosHijosModel folio in foliosHijos!){
+          conductividades.add(folio.conductividad);
+          cloruros.add(folio.cloruros);
+        }
+        servicioAPI.setCodigos(idSolicitud!, condiciones, conductividades, cloruros).then((value) {
+          if(value == "Codigos creados correctamente"){
+            getParametros(folio!);
+          }
+        });
+      }
+    }
+    else{
+      List<int?> conductividades = [];
+      List<int?> cloruros = [];
+      for (FoliosHijosModel folio in foliosHijos!){
+        conductividades.add(folio.conductividad);
+        cloruros.add(folio.cloruros);
+      }
+      servicioAPI.setCodigos(idSolicitud!, condiciones, conductividades, cloruros);
+    }
   }
 
   @override
@@ -520,7 +605,7 @@ class _AguaPageState extends State<AguaPage>{
                                     onPressed: () async {
                                       final vuelta = await Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => PuntoMuestreoPage(puntoMuestreo: punto, muestraIngresada: muestraIngresada!,)),
+                                        MaterialPageRoute(builder: (context) => PuntoMuestreoPage(puntoMuestreo: punto, muestraIngresada: muestraIngresada!, codigosGenerados: codigosGenerados!,)),
                                       );
 
                                       if (vuelta != null){
@@ -552,7 +637,7 @@ class _AguaPageState extends State<AguaPage>{
               const Row(
                 children: [
                   Padding(padding: EdgeInsets.only(left: 15),),
-                  Text('Parametros', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                  Expanded(flex: 1, child: Text('Parametros', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,), softWrap: true,)),
                 ],
               ),
               const SizedBox(height: 10,),
@@ -578,12 +663,80 @@ class _AguaPageState extends State<AguaPage>{
                       children: [
                         Row(
                           children: [
+                            Expanded(
+                              child: ListTileTheme(
+                                horizontalTitleGap: 0,
+                                child: CheckboxListTile(
+                                  title: const Text('Sin condiciones', style: TextStyle(fontSize: 10), softWrap: true,),
+                                  value: condiciones,
+                                  onChanged: (nuevoValor){
+                                    if(nuevoValor == true){
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: const Text('Alerta'),
+                                              content: const Text('¿Realmente deseas generar códigos sin condiciones?'),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () => Navigator.of(context, rootNavigator: true).pop(false),
+                                                  child: const Text('Cancelar'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () => Navigator.of(context, rootNavigator: true).pop(true),
+                                                  child: const Text('Aceptar'),
+                                                ),
+                                              ],
+                                            );
+                                          }
+                                      ).then((resultado) {
+                                        if(resultado == null) return;
+
+                                        if(resultado){
+                                          setState(() {
+                                            condiciones = nuevoValor!;
+                                          });
+                                        }
+                                      });
+                                    }
+                                    else{
+                                      setState(() {
+                                        condiciones = nuevoValor!;
+                                      });
+                                    }
+                                  },
+
+                                  controlAffinity: ListTileControlAffinity.trailing,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: ListTileTheme(
+                                horizontalTitleGap: 0,
+                                child: CheckboxListTile(
+                                  title: const Text('Historial', style: TextStyle(fontSize: 10), softWrap: true,),
+                                  value: historial,
+                                  onChanged: (nuevoValor){
+                                    setState(() {
+                                      historial = nuevoValor!;
+                                    });
+                                  },
+                                  controlAffinity: ListTileControlAffinity.trailing,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
                             Flexible(
                               fit: FlexFit.tight,
                               child: SizedBox(
                                 height: 50,
                                 child: ElevatedButton(
-                                  onPressed: (parametrosGenerados != null && parametrosGenerados == false)? (){} : null,
+                                  onPressed: (parametrosGenerados != null && parametrosGenerados == false)? (){
+                                    setCodigos();
+                                  } : null,
                                   style: ButtonStyle(
                                     backgroundColor: WidgetStateProperty.resolveWith((states){
                                       if(states.contains(WidgetState.pressed)){

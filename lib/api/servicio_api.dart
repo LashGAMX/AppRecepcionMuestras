@@ -173,4 +173,31 @@ class ServicioAPI {
       throw Exception('Error al mostrar datos');
     }
   }
+  
+  Future<String> setCodigos(int idSolicitud, bool condiciones, List<int?> conductividad, List<int?> cloruros) async {
+    final response = await http.post(
+      Uri.parse('${urlBase}setGenFolio'),
+      headers: <String, String>{
+        'Content-type': 'application/json; charset=UTF-8'
+      },
+      body: jsonEncode(<String, dynamic>{
+        'id': idSolicitud,
+        'condiciones': condiciones,
+        'conductividad': conductividad,
+        'cloruros': cloruros,
+      }),
+    );
+
+    print(response.statusCode);
+    print(response.body);
+
+    if(response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500) {
+      var respuesta = jsonDecode(response.body) as Map<String, dynamic>;
+
+      return respuesta['msg'] as String;
+    }
+    else {
+      throw Exception('Error al mostrar datos');
+    }
+  }
 }

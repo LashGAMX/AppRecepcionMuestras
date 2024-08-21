@@ -17,8 +17,9 @@ bool cargando = false;
 class PuntoMuestreoPage extends StatefulWidget{
   final FoliosHijosModel puntoMuestreo;
   final bool muestraIngresada;
+  final bool codigosGenerados;
 
-  const PuntoMuestreoPage({super.key, required this.puntoMuestreo, required this.muestraIngresada});
+  const PuntoMuestreoPage({super.key, required this.puntoMuestreo, required this.muestraIngresada, required this.codigosGenerados});
 
   @override
   State<PuntoMuestreoPage> createState() => _PuntoMuestreoPageState();
@@ -264,7 +265,7 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
                                       Expanded(
                                         child: TextField(
                                           controller: _conductividadController,
-                                          enabled: (widget.muestraIngresada == false)? true : false,
+                                          enabled: (widget.codigosGenerados == false)? true : false,
                                           keyboardType: TextInputType.number,
                                           decoration: InputDecoration(
                                             // border: const OutlineInputBorder(),
@@ -288,7 +289,7 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
                                     underline: const SizedBox(),
                                     value: _elegida,
                                     items: _opciones,
-                                    onChanged: (widget.muestraIngresada == false)? (valor) {
+                                    onChanged: (widget.codigosGenerados == false)? (valor) {
                                       setState(() {
                                         _elegida = valor;
                                         widget.puntoMuestreo.cloruros = valor!.valor;

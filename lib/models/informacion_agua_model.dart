@@ -48,8 +48,10 @@ class FoliosHijosModel{
 
 class InformacionAguaModel {
   String mensaje;
+  int? idSolicitud;
   String? folio;
   bool? muestraIngresada;
+  bool? codigosGenerados;
   bool? siralab;
   String? descarga;
   String? cliente;
@@ -61,7 +63,7 @@ class InformacionAguaModel {
   List<FoliosHijosModel>? puntosMuestreo;
   List<ParametrosModel>? parametros;
 
-  InformacionAguaModel({required this.mensaje, this.folio, this.muestraIngresada, this.siralab, this.descarga, this.cliente, this.empresa, this.fechaMuestreo, this.horaRecepcion, this.horaEntrada, this.idNorma, this.puntosMuestreo, this.parametros});
+  InformacionAguaModel({required this.mensaje, this.idSolicitud, this.folio, this.muestraIngresada, this.codigosGenerados, this.siralab, this.descarga, this.cliente, this.empresa, this.fechaMuestreo, this.horaRecepcion, this.horaEntrada, this.idNorma, this.puntosMuestreo, this.parametros});
 
   factory InformacionAguaModel.fromJson(Map<String, dynamic> json){
     var lista = json['puntosMuestreo'] as List?;
@@ -71,8 +73,10 @@ class InformacionAguaModel {
     return switch(json) {
       {
         'mensaje': String mensaje,
+        'idSolicitud': int? idSolicitud,
         'folio': String? folio,
         'muestraIngresada': bool? muestraIngresada,
+        'codigosGenerados': bool? codigosGenerados,
         'siralab': bool? siralab,
         'descarga': String? descarga,
         'cliente': String? cliente,
@@ -84,8 +88,10 @@ class InformacionAguaModel {
       } =>
         InformacionAguaModel(
           mensaje: mensaje,
+          idSolicitud: idSolicitud,
           folio: folio,
           muestraIngresada: muestraIngresada,
+          codigosGenerados: codigosGenerados,
           siralab: siralab,
           descarga: descarga,
           cliente: cliente,
