@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:recepcion_app/api/servicio_api.dart';
 import 'package:recepcion_app/models/informacion_agua_model.dart';
 import 'package:recepcion_app/pages/punto_muestreo_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+int? idUsuario;
 bool errorEncontrar = false;
 int? idSolicitud;
 String? folio;
@@ -44,6 +46,7 @@ class _AguaPageState extends State<AguaPage>{
   @override
   void initState() {
     // TODO: implement initState
+    getVariablesSesion();
     errorEncontrar = false;
     idSolicitud = null;
     folio = null;
@@ -122,6 +125,14 @@ class _AguaPageState extends State<AguaPage>{
     });
   }
 
+  getVariablesSesion() async {
+    await SharedPreferences.getInstance().then((value){
+      setState(() {
+        idUsuario = value.getInt('idUsuario');
+      });
+    });
+  }
+
   getParametros(String folioMandado) async {
     setState(() {
       cargandoParametros = true;
@@ -195,9 +206,23 @@ class _AguaPageState extends State<AguaPage>{
           conductividades.add(folio.conductividad);
           cloruros.add(folio.cloruros);
         }
+        setState(() {
+          cargandoParametros = true;
+        });
         servicioAPI.setCodigos(idSolicitud!, condiciones, conductividades, cloruros).then((value) {
           if(value == "Codigos creados correctamente"){
+            setState(() {
+              codigosGenerados = true;
+            });
+            if(mounted){
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Códigos creados correctamente')));
+            }
             getParametros(folio!);
+          }
+          else{
+            setState(() {
+              cargandoParametros = false;
+            });
           }
         });
       }
@@ -209,8 +234,84 @@ class _AguaPageState extends State<AguaPage>{
         conductividades.add(folio.conductividad);
         cloruros.add(folio.cloruros);
       }
-      servicioAPI.setCodigos(idSolicitud!, condiciones, conductividades, cloruros);
+      setState(() {
+        cargandoParametros = true;
+      });
+      servicioAPI.setCodigos(idSolicitud!, condiciones, conductividades, cloruros).then((value) {
+        if(value == "Codigos creados correctamente"){
+          setState(() {
+            codigosGenerados = true;
+          });
+          if(mounted){
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Códigos creados correctamente')));
+          }
+          getParametros(folio!);
+        }
+        else{
+          setState(() {
+            cargandoParametros = false;
+          });
+        }
+      });
     }
+  }
+
+  ingresarMuestra() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Ingresar muestra'),
+          content: const Text('¿Realmente deseas ingresar la muestra?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context, rootNavigator: true).pop(false),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context, rootNavigator: true).pop(true),
+              child: const Text('Ingresar'),
+            ),
+          ],
+        );
+      }
+    ).then((resultado) {
+      if(resultado == null) return;
+
+      if(resultado){
+        if(horaRecepcion == null || horaEntrada == null){
+          if(mounted){
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('Error'),
+                  content: const Text('Se necesita especificar la hora de recepción'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
+                      child: const Text('Entiendo'),
+                    ),
+                  ],
+                );
+              }
+            );
+          }
+        }
+        else{
+          servicioAPI.setIngresar(idSolicitud!, folio!, descarga!, cliente!, empresa!, horaRecepcion!, horaEntrada!, historial, idUsuario!).then((value){
+            if(value == "Muestra ingresada"){
+              setState(() {
+                muestraIngresada = true;
+              });
+              if(mounted){
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Muestra ingresada')));
+              }
+            }
+          });
+        }
+      }
+    });
   }
 
   @override
@@ -740,12 +841,12 @@ class _AguaPageState extends State<AguaPage>{
                                   style: ButtonStyle(
                                     backgroundColor: WidgetStateProperty.resolveWith((states){
                                       if(states.contains(WidgetState.pressed)){
-                                        return const Color.fromRGBO(0, 168, 23, 1);
+                                        return const Color.fromRGBO(237, 187, 116, 1);
                                       }
                                       if(states.contains(WidgetState.disabled)){
-                                        return const Color.fromRGBO(0, 168, 89, 0.4);
+                                        return const Color.fromRGBO(240, 173, 78, 0.4);
                                       }
-                                      return const Color.fromRGBO(0, 168, 80, 1);
+                                      return const Color.fromRGBO(240, 173, 78, 1);
                                     }),
                                     shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                       const RoundedRectangleBorder(
@@ -812,6 +913,38 @@ class _AguaPageState extends State<AguaPage>{
                                     :
                                   const CircularProgressIndicator()
                               ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              fit: FlexFit.tight,
+                              child: SizedBox(
+                                height: 50,
+                                child: ElevatedButton(
+                                  onPressed: (muestraIngresada != null && muestraIngresada == false && codigosGenerados == true)? (){
+                                    ingresarMuestra();
+                                  } : null,
+                                  style: ButtonStyle(
+                                    overlayColor: WidgetStateProperty.all(Theme.of(context).colorScheme.inversePrimary),
+                                    backgroundColor: WidgetStateProperty.resolveWith((states){
+                                      if(states.contains(WidgetState.disabled)){
+                                        return const Color.fromRGBO(0, 168, 80, 0.4);
+                                      }
+                                      return const Color.fromRGBO(0, 168, 80, 1);
+                                    }),
+                                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                      const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                                      ),
+                                    ),
+                                  ),
+                                  child: const Text('Ingresar', style: TextStyle(color: Colors.white),),
+                                ),
+                              ),
                             ),
                           ],
                         ),

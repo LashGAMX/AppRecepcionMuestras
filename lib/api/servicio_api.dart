@@ -197,4 +197,34 @@ class ServicioAPI {
       throw Exception('Error al mostrar datos');
     }
   }
+
+  Future<String> setIngresar(int idSolicitud, String folio, String descarga, String cliente, String empresa, String horaRecepcion, String horaEntrada, bool historial, int idUsuario) async {
+    final response = await http.post(
+      Uri.parse('${urlBase}setIngresar'),
+      headers: <String, String>{
+        'Content-type': 'application/json; charset=UTF-8'
+      },
+      body: jsonEncode(<String, dynamic>{
+        'idSol': idSolicitud,
+        'folio': folio,
+        'descarga': descarga,
+        'cliente': cliente,
+        'empresa': empresa,
+        'ingreso': 'Establecido',
+        'horaRecepcion': horaRecepcion,
+        'horaEntrada': horaEntrada,
+        'historial': historial,
+        'idUsuario': idUsuario,
+      }),
+    );
+
+    if(response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500) {
+      var respuesta = jsonDecode(response.body) as Map<String, dynamic>;
+
+      return respuesta['msg'] as String;
+    }
+    else {
+      throw Exception('Error al ingresar muestra');
+    }
+  }
 }
