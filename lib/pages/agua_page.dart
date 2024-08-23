@@ -531,7 +531,7 @@ class _AguaPageState extends State<AguaPage>{
                                       ),
                                       Expanded(
                                         child: GestureDetector(
-                                          onTap: (folioEncontrado != false && muestraIngresada == false)? (){
+                                          onTap: (folioEncontrado != false)? (){
                                             showDatePicker(
                                               context: context,
                                               initialDate: DateTime.parse('$fechaMuestreo'),
@@ -557,7 +557,9 @@ class _AguaPageState extends State<AguaPage>{
                                                       String fechaConvertida = '${fechaSeleccionada.year.toString()}-${fechaSeleccionada.month.toString().padLeft(2,'0')}-${fechaSeleccionada.day.toString().padLeft(2,'0')} ${fechaSeleccionada.hour.toString().padLeft(2,'0')}:${fechaSeleccionada.minute.toString().padLeft(2,'0')}:00';
                                                       setState(() {
                                                         horaRecepcion = fechaConvertida;
-                                                        // servicioAPI.upHoraRecepcion(folio!, 1, horaRecepcion!);
+                                                        if(muestraIngresada == true){
+                                                          servicioAPI.upHoraRecepcion(folio!, 1, horaRecepcion!);
+                                                        }
                                                       });
                                                     }
                                                   });
@@ -565,7 +567,7 @@ class _AguaPageState extends State<AguaPage>{
                                               }
                                             });
                                           } : null,
-                                          child: Icon(Icons.edit, color: (folioEncontrado != false && muestraIngresada == false)? Theme.of(context).colorScheme.primary : Colors.grey, size: 20,),
+                                          child: Icon(Icons.edit, color: (folioEncontrado != false)? Theme.of(context).colorScheme.primary : Colors.grey, size: 20,),
                                         ),
                                       ),
                                     ],
@@ -579,7 +581,7 @@ class _AguaPageState extends State<AguaPage>{
                                       ),
                                       Expanded(
                                         child: GestureDetector(
-                                          onTap: (folioEncontrado != false && muestraIngresada == false)? (){
+                                          onTap: (folioEncontrado != false)? (){
                                             showDatePicker(
                                               context: context,
                                               initialDate: DateTime.parse('$fechaMuestreo'),
@@ -605,7 +607,9 @@ class _AguaPageState extends State<AguaPage>{
                                                       String fechaConvertida = '${fechaSeleccionada.year.toString()}-${fechaSeleccionada.month.toString().padLeft(2,'0')}-${fechaSeleccionada.day.toString().padLeft(2,'0')} ${fechaSeleccionada.hour.toString().padLeft(2,'0')}:${fechaSeleccionada.minute.toString().padLeft(2,'0')}:00';
                                                       setState(() {
                                                         horaEntrada = fechaConvertida;
-                                                        // servicioAPI.upHoraRecepcion(folio!, 2, horaEntrada!);
+                                                        if(muestraIngresada == true){
+                                                          servicioAPI.upHoraRecepcion(folio!, 2, horaEntrada!);
+                                                        }
                                                       });
                                                     }
                                                   });
@@ -613,7 +617,7 @@ class _AguaPageState extends State<AguaPage>{
                                               }
                                             });
                                           } : null,
-                                          child: Icon(Icons.edit, color: (folioEncontrado != false && muestraIngresada == false)? Theme.of(context).colorScheme.primary : Colors.grey, size: 20,),
+                                          child: Icon(Icons.edit, color: (folioEncontrado != false)? Theme.of(context).colorScheme.primary : Colors.grey, size: 20,),
                                         ),
                                       ),
                                     ],
