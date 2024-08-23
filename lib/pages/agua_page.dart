@@ -304,9 +304,10 @@ class _AguaPageState extends State<AguaPage>{
         }
         else{
           servicioAPI.setIngresar(idSolicitud!, folio!, descarga!, cliente!, empresa!, horaRecepcion!, horaEntrada!, historial, idUsuario!).then((value){
-            if(value == "Muestra ingresada"){
+            if(value[0] == "Muestra ingresada"){
               setState(() {
                 muestraIngresada = true;
+                fechaEmision = value[1];
               });
               if(mounted){
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Muestra ingresada')));

@@ -218,7 +218,7 @@ class ServicioAPI {
     }
   }
 
-  Future<String> setIngresar(int idSolicitud, String folio, String descarga, String cliente, String empresa, String horaRecepcion, String horaEntrada, bool historial, int idUsuario) async {
+  Future<List<String>> setIngresar(int idSolicitud, String folio, String descarga, String cliente, String empresa, String horaRecepcion, String horaEntrada, bool historial, int idUsuario) async {
     final response = await http.post(
       Uri.parse('${urlBase}setIngresar'),
       headers: <String, String>{
@@ -240,8 +240,9 @@ class ServicioAPI {
 
     if(response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500) {
       var respuesta = jsonDecode(response.body) as Map<String, dynamic>;
+      List<String> respuestaDevuelta = [respuesta["msg"], respuesta["fechaEmision"]];
 
-      return respuesta['msg'] as String;
+      return respuestaDevuelta;
     }
     else {
       throw Exception('Error al ingresar muestra');
