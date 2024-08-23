@@ -112,6 +112,26 @@ class ServicioAPI {
     }
   }
 
+  Future<bool> upFechaEmision(String folio, String fechaEmision) async {
+    final response = await http.post(
+      Uri.parse('${urlBase}upFechaEmision'),
+      headers: <String, String>{
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'folio': folio,
+        'fechaEmision': fechaEmision,
+      }),
+    );
+
+    if(response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500) {
+      return true;
+    }
+    else{
+      throw Exception('Error al cambiar la hora');
+    }
+  }
+
   Future<bool> setImagenPunto(int idSolicitud, String foto) async {
     final response = await http.post(
       Uri.parse('${urlBase}setImagenPunto'),

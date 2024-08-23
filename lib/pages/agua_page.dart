@@ -28,6 +28,7 @@ int? idNorma;
 bool cargandoParametros = false;
 bool condiciones = false;
 bool historial = false;
+String? fechaEmision;
 
 class AguaPage extends StatefulWidget{
   final FoliosHijosModel? regresado;
@@ -70,6 +71,7 @@ class _AguaPageState extends State<AguaPage>{
     cargandoParametros = false;
     condiciones = false;
     historial = false;
+    fechaEmision = null;
     super.initState();
   }
 
@@ -91,6 +93,7 @@ class _AguaPageState extends State<AguaPage>{
           horaEntrada = value.horaEntrada;
           foliosHijos = value.puntosMuestreo;
           idNorma = value.idNorma;
+          fechaEmision = value.fechaEmision;
           folioEncontrado = true;
         });
         getParametros(folioMandado);
@@ -120,6 +123,7 @@ class _AguaPageState extends State<AguaPage>{
           cargandoParametros = false;
           condiciones = false;
           historial = false;
+          fechaEmision = null;
         });
       }
     });
@@ -745,6 +749,45 @@ class _AguaPageState extends State<AguaPage>{
                   Expanded(flex: 1, child: Text('Parametros', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,), softWrap: true,)),
                 ],
               ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Padding(padding: EdgeInsets.only(left: 15),),
+                  Text.rich(
+                    TextSpan(
+                      children: <TextSpan>[
+                        const TextSpan(
+                          text: 'Fecha de emisión:  ',
+                          style: TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                        TextSpan(
+                          text: fechaEmision ?? 'N/A',
+                        ),
+                      ],
+                    ),
+                    softWrap: true,
+                  ),
+                  IconButton(
+                    onPressed: (muestraIngresada == true)? (){
+                      showDatePicker(
+                        context: context,
+                        initialDate: DateTime.parse('$fechaEmision'),
+                        firstDate: DateTime.parse('$fechaMuestreo'),
+                        lastDate: DateTime.now().add(const Duration(days: 365)),
+                      ).then((valor) {
+                        if(valor != null){
+                          String nuevaFechaEmision = '${valor.year.toString()}-${valor.month.toString().padLeft(2,'0')}-${valor.day.toString().padLeft(2,'0')}';
+                          setState(() {
+                            fechaEmision = nuevaFechaEmision;
+                            servicioAPI.upFechaEmision(folio!, fechaEmision!);
+                          });
+                        }
+                      });
+                    } : null,
+                    icon: Icon(Icons.edit, color: (muestraIngresada == true)? Theme.of(context).colorScheme.primary : Colors.grey, size: 20,),
+                  ),
+                ],
+              ),
               const SizedBox(height: 10,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -774,6 +817,7 @@ class _AguaPageState extends State<AguaPage>{
                                 child: CheckboxListTile(
                                   title: const Text('Sin condiciones', style: TextStyle(fontSize: 10), softWrap: true,),
                                   value: condiciones,
+                                  enabled: (codigosGenerados == true)? false : true,
                                   onChanged: (nuevoValor){
                                     if(nuevoValor == true){
                                       showDialog(
@@ -821,6 +865,7 @@ class _AguaPageState extends State<AguaPage>{
                                 child: CheckboxListTile(
                                   title: const Text('Historial', style: TextStyle(fontSize: 10), softWrap: true,),
                                   value: historial,
+                                  enabled: (muestraIngresada == true)? false : true,
                                   onChanged: (nuevoValor){
                                     setState(() {
                                       historial = nuevoValor!;
