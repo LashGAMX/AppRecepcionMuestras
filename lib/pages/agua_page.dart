@@ -94,6 +94,7 @@ class _AguaPageState extends State<AguaPage>{
           foliosHijos = value.puntosMuestreo;
           idNorma = value.idNorma;
           fechaEmision = value.fechaEmision;
+          historial = value.historial!;
           folioEncontrado = true;
         });
         getParametros(folioMandado);
