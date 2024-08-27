@@ -93,10 +93,16 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
   getFotosPunto(int idSolicitud) async {
     setState(() {
       cargando = true;
+      listaImagenes = [];
     });
     servicioAPI.getImagenesPunto(idSolicitud).then((value) {
       setState(() {
-        listaImagenes = value;
+        // listaImagenes = value;
+        if(value != null){
+          for(var elemento in value){
+            listaImagenes?.add(elemento);
+          }
+        }
         cargando = false;
       });
     });

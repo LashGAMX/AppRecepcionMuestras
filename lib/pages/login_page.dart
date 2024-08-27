@@ -95,11 +95,8 @@ class _LoginPageState extends State<LoginPage>{
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: Text('Bienvenido a la aplicación de ', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.grey.shade700), softWrap: true,),
-                ),
-                Text('recepción de muestras', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.grey.shade700), softWrap: true,),
+                const Padding(padding: EdgeInsets.only(left: 20),),
+                Expanded(child: Text('Bienvenido a la aplicación de recepción de muestras', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.grey.shade700), softWrap: true,)),
               ],
             ),
             Row(

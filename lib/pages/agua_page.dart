@@ -668,7 +668,7 @@ class _AguaPageState extends State<AguaPage>{
                       children: [
                         (foliosHijos != null) ?
                         SizedBox(
-                          height: 100,
+                          height: 110,
                           child: ListView.builder(
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
