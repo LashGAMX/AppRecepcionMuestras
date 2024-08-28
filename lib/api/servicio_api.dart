@@ -49,148 +49,252 @@ class ServicioAPI {
     }
   }
 
-  Future<InformacionAguaModel> getInformacionFolioAgua(String folioMandado) async {
-    final response = await http.post(
-      Uri.parse('${urlBase}getInformacionFolioAgua'),
-      headers: <String, String>{
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'folio': folioMandado,
-      }),
-    );
+  Future<InformacionAguaModel?> getInformacionFolioAgua(String folioMandado) async {
+    const maximosIntentos = 3;
+    var intentos = 0;
+    while(true) {
+      try {
+        final response = await http.post(
+          Uri.parse('${urlBase}getInformacionFolioAgua'),
+          headers: <String, String>{
+            'Content-type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, String>{
+            'folio': folioMandado,
+          }),
+        );
 
-    if(response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500){
-      return InformacionAguaModel.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
-    }
-    else{
-      throw Exception('Error al regresar información del folio');
-    }
-  }
-
-  Future<List<ParametrosModel>?> getParametros(String folioMandado) async {
-    final response = await http.post(
-      Uri.parse('${urlBase}getParametros'),
-      headers: <String, String>{
-        'Content-type': 'application/json; charset=UTF-8'
-      },
-      body: jsonEncode(<String, dynamic>{
-        'folio': folioMandado,
-      }),
-    );
-
-    if(response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500){
-      var respuesta = jsonDecode(response.body) as Map<String, dynamic>;
-      var lista = respuesta['parametros'] as List?;
-      List<ParametrosModel>? listaParametros = lista?.map((i) => ParametrosModel.fromJson(i)).toList();
-
-      return listaParametros;
-    }
-    else{
-      throw Exception('Error al regresar parametros');
+        if (response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500) {
+          return InformacionAguaModel.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+        }
+        else {
+          throw Exception('Error al regresar información del folio');
+        }
+      } catch (e) {
+        intentos++;
+        if (intentos > maximosIntentos) {
+          return null;
+        }
+        else {
+          await Future.delayed(const Duration(seconds: 2));
+        }
+      }
     }
   }
 
-  Future<bool> upHoraRecepcion(String folio, int tipoHora, String hora) async {
-    final response = await http.post(
-      Uri.parse('${urlBase}upHoraRecepcion'),
-      headers: <String, String>{
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        'folio': folio,
-        'tipoHora': tipoHora,
-        'hora': hora,
-      }),
-    );
+  Future<dynamic> getParametros(String folioMandado) async {
+    const maximosIntentos = 3;
+    var intentos = 0;
+    while(true) {
+      try {
+        final response = await http.post(
+          Uri.parse('${urlBase}getParametros'),
+          headers: <String, String>{
+            'Content-type': 'application/json; charset=UTF-8'
+          },
+          body: jsonEncode(<String, dynamic>{
+            'folio': folioMandado,
+          }),
+        );
 
-    if(response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500) {
-      return true;
-    }
-    else{
-      throw Exception('Error al cambiar la hora');
-    }
-  }
+        if (response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500) {
+          var respuesta = jsonDecode(response.body) as Map<String, dynamic>;
+          var lista = respuesta['parametros'] as List?;
+          List<ParametrosModel>? listaParametros = lista?.map((i) => ParametrosModel.fromJson(i)).toList();
 
-  Future<bool> upFechaEmision(String folio, String fechaEmision) async {
-    final response = await http.post(
-      Uri.parse('${urlBase}upFechaEmision'),
-      headers: <String, String>{
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        'folio': folio,
-        'fechaEmision': fechaEmision,
-      }),
-    );
-
-    if(response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500) {
-      return true;
-    }
-    else{
-      throw Exception('Error al cambiar la hora');
+          return listaParametros;
+        }
+        else {
+          throw Exception('Error al regresar parametros');
+        }
+      } catch (e) {
+        intentos++;
+        if(intentos > maximosIntentos){
+          return "Error";
+        }
+        else{
+          await Future.delayed(const Duration(seconds: 2));
+        }
+      }
     }
   }
 
-  Future<bool> setImagenPunto(int idSolicitud, String foto) async {
-    final response = await http.post(
-      Uri.parse('${urlBase}setImagenPunto'),
-      headers: <String, String>{
-        'Content-type': 'application/json; charset=UTF-8'
-      },
-      body: jsonEncode(<String, dynamic>{
-        'idSolicitud': idSolicitud,
-        'foto': foto,
-      }),
-    );
+  Future<bool?> upHoraRecepcion(String folio, int tipoHora, String hora) async {
+    const maximosIntentos = 3;
+    var intentos = 0;
+    while(true) {
+      try {
+        final response = await http.post(
+          Uri.parse('${urlBase}upHoraRecepcion'),
+          headers: <String, String>{
+            'Content-type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, dynamic>{
+            'folio': folio,
+            'tipoHora': tipoHora,
+            'hora': hora,
+          }),
+        );
 
-    if(response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500) {
-      return true;
-    }
-    else{
-      throw Exception('Error al subir la foto');
-    }
-  }
-
-  Future<List<PuntoAguaModel>?> getImagenesPunto(int idSolicitud) async {
-    final response = await http.post(
-      Uri.parse('${urlBase}getImagenesPunto'),
-      headers: <String, String>{
-        'Content-type': 'application/json; charset=UTF-8'
-      },
-      body: jsonEncode(<String, dynamic>{
-        'idSolicitud': idSolicitud,
-      }),
-    );
-
-    if(response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500) {
-      var respuesta = jsonDecode(response.body) as Map<String, dynamic>;
-      var lista = respuesta['model'] as List?;
-      List<PuntoAguaModel>? listaPuntos = lista?.map((i) => PuntoAguaModel.fromJson(i)).toList();
-
-      return listaPuntos;
-    }
-    else{
-      throw Exception('Error al subir la foto');
+        if (response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500) {
+          return true;
+        }
+        else {
+          throw Exception('Error al cambiar la hora');
+        }
+      } catch (e) {
+        intentos++;
+        if (intentos > maximosIntentos) {
+          return null;
+        }
+        else {
+          await Future.delayed(const Duration(seconds: 2));
+        }
+      }
     }
   }
 
-  Future<DetallesPunto> getDatosPunto(int idSolicitud) async {
-    final response = await http.post(
-      Uri.parse('${urlBase}getDatosPunto'),
-      headers: <String, String>{
-        'Content-type': 'application/json; charset=UTF-8'
-      },
-      body: jsonEncode(<String, dynamic>{
-        'idSolicitud': idSolicitud,
-      }),
-    );
+  Future<bool?> upFechaEmision(String folio, String fechaEmision) async {
+    const maximosIntentos = 3;
+    var intentos = 0;
+    while(true) {
+      try {
+        final response = await http.post(
+          Uri.parse('${urlBase}upFechaEmision'),
+          headers: <String, String>{
+            'Content-type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, dynamic>{
+            'folio': folio,
+            'fechaEmision': fechaEmision,
+          }),
+        );
 
-    if(response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500) {
-      return DetallesPunto.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+        if (response.statusCode == 200 || response.statusCode == 400 ||
+            response.statusCode == 404 || response.statusCode == 419 ||
+            response.statusCode == 500) {
+          return true;
+        }
+        else {
+          throw Exception('Error al cambiar la hora');
+        }
+      } catch(e) {
+        intentos++;
+        if(intentos > maximosIntentos){
+          return null;
+        }
+        else{
+          await Future.delayed(const Duration(seconds: 2));
+        }
+      }
     }
-    else {
-      throw Exception('Error al mostrar datos');
+  }
+
+  Future<bool?> setImagenPunto(int idSolicitud, String foto) async {
+    const maximosIntentos = 3;
+    var intentos = 0;
+    while(true) {
+      try {
+        final response = await http.post(
+          Uri.parse('${urlBase}setImagenPunto'),
+          headers: <String, String>{
+            'Content-type': 'application/json; charset=UTF-8'
+          },
+          body: jsonEncode(<String, dynamic>{
+            'idSolicitud': idSolicitud,
+            'foto': foto,
+          }),
+        );
+
+        if (response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500) {
+          return true;
+        }
+        else {
+          throw Exception('Error al subir la foto');
+        }
+      } catch (e) {
+        intentos++;
+        if(intentos > maximosIntentos){
+          return null;
+        }
+        else{
+          await Future.delayed(const Duration(seconds: 2));
+        }
+      }
+    }
+  }
+
+  Future<dynamic> getImagenesPunto(int idSolicitud) async {
+    const maximosIntentos = 3;
+    var intentos = 0;
+    while(true) {
+      try {
+        final response = await http.post(
+          Uri.parse('${urlBase}getImagenesPunto'),
+          headers: <String, String>{
+            'Content-type': 'application/json; charset=UTF-8'
+          },
+          body: jsonEncode(<String, dynamic>{
+            'idSolicitud': idSolicitud,
+          }),
+        );
+
+        if (response.statusCode == 200 || response.statusCode == 400 || response.statusCode == 404 || response.statusCode == 419 || response.statusCode == 500) {
+          var respuesta = jsonDecode(response.body) as Map<String, dynamic>;
+          var lista = respuesta['model'] as List?;
+          List<PuntoAguaModel>? listaPuntos = lista?.map((i) =>
+              PuntoAguaModel.fromJson(i)).toList();
+
+          return listaPuntos;
+        }
+        else {
+          throw Exception('Error al subir la foto');
+        }
+      } catch (e) {
+        intentos++;
+        if(intentos > maximosIntentos){
+          return "Error";
+        }
+        else{
+          await Future.delayed(const Duration(seconds: 2));
+        }
+      }
+    }
+  }
+
+  Future<DetallesPunto?> getDatosPunto(int idSolicitud) async {
+    const maximosIntentos = 3;
+    var intentos = 0;
+    while(true) {
+      try {
+        final response = await http.post(
+          Uri.parse('${urlBase}getDatosPunto'),
+          headers: <String, String>{
+            'Content-type': 'application/json; charset=UTF-8'
+          },
+          body: jsonEncode(<String, dynamic>{
+            'idSolicitud': idSolicitud,
+          }),
+        );
+
+        if (response.statusCode == 200 || response.statusCode == 400 ||
+            response.statusCode == 404 || response.statusCode == 419 ||
+            response.statusCode == 500) {
+          return DetallesPunto.fromJson(
+              jsonDecode(response.body) as Map<String, dynamic>);
+        }
+        else {
+          throw Exception('Error al mostrar datos');
+        }
+      } catch (e) {
+        intentos++;
+        if(intentos > maximosIntentos){
+          return null;
+        }
+        else{
+          await Future.delayed(const Duration(seconds: 2));
+        }
+      }
     }
   }
   

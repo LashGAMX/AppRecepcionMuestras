@@ -82,11 +82,18 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
 
   getDatosPunto(int idSolicitud) async {
     servicioAPI.getDatosPunto(idSolicitud).then((value) {
-      setState(() {
-        fechaFinMuestreo = value.fechaFinMuestreo;
-        fechaConformacion = value.fechaConformacion;
-        procedencia = value.procedencia;
-      });
+      if(value != null) {
+        setState(() {
+          fechaFinMuestreo = value.fechaFinMuestreo;
+          fechaConformacion = value.fechaConformacion;
+          procedencia = value.procedencia;
+        });
+      }
+      else {
+        if(mounted){
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error al obtener los datos del punto de muestreo')));
+        }
+      }
     });
   }
 
@@ -96,15 +103,22 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
       listaImagenes = [];
     });
     servicioAPI.getImagenesPunto(idSolicitud).then((value) {
-      setState(() {
-        // listaImagenes = value;
-        if(value != null){
-          for(var elemento in value){
-            listaImagenes?.add(elemento);
-          }
+      if(value is String){
+        if(mounted){
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Algo salió mal al obtener las imágenes del punto. Intentar otra vez')));
         }
-        cargando = false;
-      });
+      }
+      else {
+        setState(() {
+          // listaImagenes = value;
+          if (value != null) {
+            for (var elemento in value) {
+              listaImagenes?.add(elemento);
+            }
+          }
+          cargando = false;
+        });
+      }
     });
   }
 
@@ -119,11 +133,20 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
     setState(() {
       listaImagenes ??= [];
 
-      listaImagenes!.add(PuntoAguaModel(foto: imagenBase64));
       cargando = true;
       // listaImagenes!.add(File(imagenTomada.path));
     });
     servicioAPI.setImagenPunto(widget.puntoMuestreo.idFolio!, imagenBase64).then((value) {
+      if(value != null){
+        setState(() {
+          listaImagenes!.add(PuntoAguaModel(foto: imagenBase64));
+        });
+      }
+      else{
+        if(mounted){
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Algo salió mal al subir la foto')));
+        }
+      }
       setState(() {
         cargando = false;
       });
@@ -141,12 +164,21 @@ class _PuntoMuestreoPageState extends State<PuntoMuestreoPage>{
     setState(() {
       listaImagenes ??= [];
 
-      listaImagenes!.add(PuntoAguaModel(foto: imagenBase64));
       cargando = true;
       // listaImagenes!.add(File(imagenElegida.path));
       // _imagenMostrada = File(imagenElegida.path);
     });
     servicioAPI.setImagenPunto(widget.puntoMuestreo.idFolio!, imagenBase64).then((value) {
+      if(value != null){
+        setState(() {
+          listaImagenes!.add(PuntoAguaModel(foto: imagenBase64));
+        });
+      }
+      else{
+        if(mounted){
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Algo salió mal al subir la foto')));
+        }
+      }
       setState(() {
         cargando = false;
       });

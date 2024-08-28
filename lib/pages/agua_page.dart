@@ -29,6 +29,7 @@ bool cargandoParametros = false;
 bool condiciones = false;
 bool historial = false;
 String? fechaEmision;
+bool cargandoFolio = false;
 
 class AguaPage extends StatefulWidget{
   final FoliosHijosModel? regresado;
@@ -72,61 +73,75 @@ class _AguaPageState extends State<AguaPage>{
     condiciones = false;
     historial = false;
     fechaEmision = null;
+    cargandoFolio = false;
     super.initState();
   }
 
   getInformacionFolio(String folioMandado) async {
+    setState(() {
+      cargandoFolio = true;
+    });
     servicioAPI.getInformacionFolioAgua(folioMandado).then((value) {
-      if(value.mensaje == 'exito'){
-        setState(() {
-          errorEncontrar = false;
-          idSolicitud = value.idSolicitud;
-          folio = value.folio;
-          muestraIngresada = value.muestraIngresada;
-          codigosGenerados = value.codigosGenerados;
-          siralab = value.siralab;
-          descarga = value.descarga;
-          cliente = value.cliente;
-          empresa = value.empresa;
-          fechaMuestreo = value.fechaMuestreo;
-          horaRecepcion = value.horaRecepcion;
-          horaEntrada = value.horaEntrada;
-          foliosHijos = value.puntosMuestreo;
-          idNorma = value.idNorma;
-          fechaEmision = value.fechaEmision;
-          historial = value.historial!;
-          folioEncontrado = true;
-        });
-        getParametros(folioMandado);
+      if(value != null) {
+        if (value.mensaje == 'exito') {
+          setState(() {
+            errorEncontrar = false;
+            idSolicitud = value.idSolicitud;
+            folio = value.folio;
+            muestraIngresada = value.muestraIngresada;
+            codigosGenerados = value.codigosGenerados;
+            siralab = value.siralab;
+            descarga = value.descarga;
+            cliente = value.cliente;
+            empresa = value.empresa;
+            fechaMuestreo = value.fechaMuestreo;
+            horaRecepcion = value.horaRecepcion;
+            horaEntrada = value.horaEntrada;
+            foliosHijos = value.puntosMuestreo;
+            idNorma = value.idNorma;
+            fechaEmision = value.fechaEmision;
+            historial = value.historial!;
+            folioEncontrado = true;
+          });
+          getParametros(folioMandado);
+        }
+        else {
+          setState(() {
+            errorEncontrar = true;
+            idSolicitud = null;
+            folio = null;
+            muestraIngresada = null;
+            codigosGenerados = null;
+            siralab = null;
+            descarga = null;
+            cliente = null;
+            empresa = null;
+            fechaMuestreo = null;
+            horaRecepcion = null;
+            horaEntrada = null;
+            fechaFinMuestreo = null;
+            fechaConformacion = null;
+            procedencia = null;
+            parametrosGenerados = null;
+            foliosHijos = null;
+            parametros = null;
+            idNorma = null;
+            folioEncontrado = false;
+            cargandoParametros = false;
+            condiciones = false;
+            historial = false;
+            fechaEmision = null;
+          });
+        }
       }
       else{
-        setState(() {
-          errorEncontrar = true;
-          idSolicitud = null;
-          folio = null;
-          muestraIngresada = null;
-          codigosGenerados = null;
-          siralab = null;
-          descarga = null;
-          cliente = null;
-          empresa = null;
-          fechaMuestreo = null;
-          horaRecepcion = null;
-          horaEntrada = null;
-          fechaFinMuestreo = null;
-          fechaConformacion = null;
-          procedencia = null;
-          parametrosGenerados = null;
-          foliosHijos = null;
-          parametros = null;
-          idNorma = null;
-          folioEncontrado = false;
-          cargandoParametros = false;
-          condiciones = false;
-          historial = false;
-          fechaEmision = null;
-        });
+        if(mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Algo salió mal al buscar el folio')));
+        }
       }
+      setState(() {
+        cargandoFolio = false;
+      });
     });
   }
 
@@ -143,16 +158,26 @@ class _AguaPageState extends State<AguaPage>{
       cargandoParametros = true;
     });
     servicioAPI.getParametros(folioMandado).then((value) {
-      setState(() {
-        parametros = value;
-        if(parametros != null && parametros!.isNotEmpty){
-          parametrosGenerados = true;
+      if(value is String) {
+        if(mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Algo salió mal al obtener los parametros... Intenta otra vez')));
         }
-        else if(parametros != null && parametros!.isEmpty){
-          parametrosGenerados = false;
-        }
-        cargandoParametros = false;
-      });
+        setState(() {
+          cargandoParametros = false;
+        });
+      }
+      else {
+        setState(() {
+          parametros = value;
+          if (parametros != null && parametros!.isNotEmpty) {
+            parametrosGenerados = true;
+          }
+          else if (parametros != null && parametros!.isEmpty) {
+            parametrosGenerados = false;
+          }
+          cargandoParametros = false;
+        });
+      }
     });
   }
 
@@ -390,16 +415,19 @@ class _AguaPageState extends State<AguaPage>{
                                 child: SizedBox(
                                   height: 50,
                                   child: ElevatedButton(
-                                    onPressed: (){
+                                    onPressed: (cargandoFolio == false)? (){
                                       if(_formKey.currentState!.validate()) {
                                         getInformacionFolio(_controlerFolio.text);
                                       }
                                       FocusManager.instance.primaryFocus?.unfocus();
-                                    },
+                                    } : null,
                                     style: ButtonStyle(
                                       backgroundColor: WidgetStateProperty.resolveWith((states){
                                         if(states.contains(WidgetState.pressed)){
                                           return Theme.of(context).colorScheme.inversePrimary;
+                                        }
+                                        if(states.contains(WidgetState.disabled)){
+                                          return Theme.of(context).colorScheme.primary.withOpacity(0.4);
                                         }
                                         return Theme.of(context).colorScheme.primary;
                                       }),
@@ -561,12 +589,25 @@ class _AguaPageState extends State<AguaPage>{
                                                         horaSeleccionada.minute,
                                                       );
                                                       String fechaConvertida = '${fechaSeleccionada.year.toString()}-${fechaSeleccionada.month.toString().padLeft(2,'0')}-${fechaSeleccionada.day.toString().padLeft(2,'0')} ${fechaSeleccionada.hour.toString().padLeft(2,'0')}:${fechaSeleccionada.minute.toString().padLeft(2,'0')}:00';
-                                                      setState(() {
-                                                        horaRecepcion = fechaConvertida;
-                                                        if(muestraIngresada == true){
-                                                          servicioAPI.upHoraRecepcion(folio!, 1, horaRecepcion!);
-                                                        }
-                                                      });
+                                                      if(muestraIngresada == true){
+                                                        servicioAPI.upHoraRecepcion(folio!, 1, fechaConvertida).then((value) {
+                                                          if(value != null){
+                                                            setState(() {
+                                                              horaRecepcion = fechaConvertida;
+                                                            });
+                                                          }
+                                                          else{
+                                                            if(context.mounted) {
+                                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No se pudo actualizar la hora')));
+                                                            }
+                                                          }
+                                                        });
+                                                      }
+                                                      else{
+                                                        setState(() {
+                                                          horaRecepcion = fechaConvertida;
+                                                        });
+                                                      }
                                                     }
                                                   });
                                                 }
@@ -611,12 +652,31 @@ class _AguaPageState extends State<AguaPage>{
                                                         horaSeleccionada.minute,
                                                       );
                                                       String fechaConvertida = '${fechaSeleccionada.year.toString()}-${fechaSeleccionada.month.toString().padLeft(2,'0')}-${fechaSeleccionada.day.toString().padLeft(2,'0')} ${fechaSeleccionada.hour.toString().padLeft(2,'0')}:${fechaSeleccionada.minute.toString().padLeft(2,'0')}:00';
-                                                      setState(() {
-                                                        horaEntrada = fechaConvertida;
-                                                        if(muestraIngresada == true){
-                                                          servicioAPI.upHoraRecepcion(folio!, 2, horaEntrada!);
-                                                        }
-                                                      });
+                                                      if(muestraIngresada == true){
+                                                        servicioAPI.upHoraRecepcion(folio!, 2, fechaConvertida).then((value) {
+                                                          if(value != null) {
+                                                            setState(() {
+                                                              horaEntrada = fechaConvertida;
+                                                            });
+                                                          }
+                                                          else {
+                                                            if(context.mounted) {
+                                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No se pudo actualizar la hora')));
+                                                            }
+                                                          }
+                                                        });
+                                                      }
+                                                      else{
+                                                        setState(() {
+                                                          horaEntrada = fechaConvertida;
+                                                        });
+                                                      }
+                                                      // setState(() {
+                                                      //   horaEntrada = fechaConvertida;
+                                                      //   if(muestraIngresada == true){
+                                                      //     servicioAPI.upHoraRecepcion(folio!, 2, horaEntrada!);
+                                                      //   }
+                                                      // });
                                                     }
                                                   });
                                                 }
@@ -779,9 +839,17 @@ class _AguaPageState extends State<AguaPage>{
                       ).then((valor) {
                         if(valor != null){
                           String nuevaFechaEmision = '${valor.year.toString()}-${valor.month.toString().padLeft(2,'0')}-${valor.day.toString().padLeft(2,'0')}';
-                          setState(() {
-                            fechaEmision = nuevaFechaEmision;
-                            servicioAPI.upFechaEmision(folio!, fechaEmision!);
+                          servicioAPI.upFechaEmision(folio!, nuevaFechaEmision).then((nuevoValor) {
+                            if(nuevoValor != null){
+                              setState(() {
+                                fechaEmision = nuevaFechaEmision;
+                              });
+                            }
+                            else{
+                              if(context.mounted){
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No se pudo cambiar la fecha de emisión')));
+                              }
+                            }
                           });
                         }
                       });
