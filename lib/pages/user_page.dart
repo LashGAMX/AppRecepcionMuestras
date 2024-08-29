@@ -189,6 +189,13 @@ class _UserPageState extends State<UserPage>{
                   ),
                 ],
               ),
+              const SizedBox(height: 10,),
+              const Row(
+                children: [
+                  Padding(padding: EdgeInsets.only(left: 15),),
+                  Text('SARAA v1.1.0', style: TextStyle(color: Colors.grey),),
+                ],
+              )
             ],
           ),
         ),
